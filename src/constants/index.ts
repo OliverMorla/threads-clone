@@ -29,4 +29,27 @@ const NavigationItems = [
   },
 ];
 
-export { NavigationItems };
+const FooterItems = [
+  {
+    name: "@ 2023",
+    path: "/",
+  },
+  {
+    name: "Threads Terms",
+    path: "/",
+  },
+  {
+    name: "Privacy Policy",
+    path: "/",
+  },
+  {
+    name: "Cookies Policy",
+    path: "/",
+  },
+  {
+    name: "Report a Problem",
+    path: "/",
+  },
+];
+
+export { NavigationItems, FooterItems };

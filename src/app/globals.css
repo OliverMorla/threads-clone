@@ -3,29 +3,29 @@
 @tailwind utilities;
 
 :root {
-    --primary: #101010;
-    --secondary: #ffffff;
-    --tertiary: #f3f5f7;
-    --quaternary: #101010D9;
-    --quinary: #E1E1E8;
-    --senary: #f2f3f4;
+  --primary: #101010;
+  --secondary: #ffffff;
+  --tertiary: #f3f5f7;
+  --quaternary: #101010d9;
+  --quinary: #e1e1e8;
+  --senary: #f2f3f4;
+  --septenary: #1e1e1e;
 }
 
-
 html {
-    scroll-behavior: smooth;
-    height: 100%;
+  scroll-behavior: smooth;
+  height: 100%;
 }
 
 body {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    background-color: var(--primary);
-    color: var(--secondary);
-    font-size: 16px;
-    line-height: 1.5;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--primary);
+  color: var(--secondary);
+  font-size: 16px;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }

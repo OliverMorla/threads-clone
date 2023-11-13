@@ -4,6 +4,9 @@ import { Inter } from "next/font/google";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
+import AuthProvider from "@/providers/auth-providers";
+import ThreadProvider from "@/providers/thread-provider";
+
 import "./globals.css";
 
 const inter = Inter({
@@ -25,9 +28,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Header />
-        {children}
-        <Footer />
+        <AuthProvider>
+          <ThreadProvider>
+            <Header />
+            {children}
+            <Footer />
+          </ThreadProvider>
+        </AuthProvider>
       </body>
     </html>
   );
