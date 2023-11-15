@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 const Register = () => {
@@ -9,15 +10,33 @@ const Register = () => {
     password: "",
   });
 
+  const router = useRouter();
+
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+
+      const data = await res.json();
+      if (data.ok) {
+        alert(data.message);
+        // router.push("/auth/login");
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Something went wrong");
+    }
   };
 
-  console.log(input);
   return (
     <main className="h-full w-full flex justify-center items-center flex-col">
       <Image
@@ -42,6 +61,7 @@ const Register = () => {
       <form
         action=""
         className="flex flex-col max-h-fit max-w-[500px] w-full gap-2 p-2"
+        onSubmit={handleSubmit}
       >
         <input
           name="username"

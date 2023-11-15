@@ -1,6 +1,10 @@
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
+
 import bcrypt from "bcrypt";
+
+import User from "@/lib/models/user.model";
+import { connectToDatabase } from "@/lib/db/moongose";
 
 const handler = NextAuth({
   session: {
@@ -24,66 +28,38 @@ const handler = NextAuth({
         },
       },
       async authorize(credentials: any, req): Promise<any> {
-        // if (credentials) {
-        //   const user = await prisma.users.findUnique({
-        //     where: {
-        //       email: credentials?.email,
-        //     },
-        //   });
-        //   if (
-        //     user &&
-        //     bcrypt.compareSync(credentials?.password, user?.password ?? "")
-        //   ) {
-        //     const name =
-        //       user.first_name && user.last_name
-        //         ? user.first_name + " " + user.last_name
-        //         : user.first_name;
-        //     const User = {
-        //       id: user.id,
-        //       name: name,
-        //       email: user.email,
-        //     };
-        //     return User;
-        //   }
-        // } else {
-        //   return null;
-        // }
+        await connectToDatabase();
+        if (credentials) {
+          const user = await User.findOne({ email: credentials?.email });
+          if (
+            user &&
+            bcrypt.compareSync(credentials?.password, user.password)
+          ) {
+            const User = {
+              id: JSON.stringify(user._id).split('"')[1],
+              image: user.avatar,
+              name: user.name,
+              email: user.email,
+            };
+            return User;
+          } else {
+            return null;
+          }
+        } else {
+          return null;
+        }
       },
     }),
   ],
   callbacks: {
     // Modifies the default session to better fit our application's user structure.
-    async session({ session, user, token }) {
-      //   const User = await prisma.users.findUnique({
-      //     where: {
-      //       id: Number(token.sub),
-      //     },
-      //     select: {
-      //       role: true,
-      //     },
-      //   });
-
-      //   // @ts-ignore
-      //   session.user.id = Number(token.sub);
-      //   // @ts-ignore
-      //   session.user.role = User.role;
+    async session({ session, token }) {
+      // @ts-ignore
+      session.user.id = token.sub;
       return session;
     },
 
     async jwt({ token, account, profile }) {
-      //   const user = await prisma.users.findUnique({
-      //     where: {
-      //       id: Number(token.sub),
-      //     },
-      //     select: {
-      //       role: true,
-      //       avatar_url: true,
-      //     },
-      //   });
-
-      //   token.picture = user?.avatar_url;
-      //   token.role = user?.role;
-
       return token;
     },
   },

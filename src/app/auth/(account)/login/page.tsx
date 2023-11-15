@@ -1,22 +1,44 @@
 "use client";
 import { useState } from "react";
+
 import Image from "next/image";
+import { redirect, useRouter } from "next/navigation";
+
+import { signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 const Login = () => {
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  if (session?.user) redirect("/");
+
   const [input, setInput] = useState({
     email: "",
     password: "",
   });
 
+  // handle login input
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // handle login submit
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    try {
+      const res = await signIn("credentials", {
+        redirect: true,
+        email: input.email,
+        password: input.password,
+        callbackUrl: "/",
+      });
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Something went wrong");
+    }
   };
 
-  console.log(input);
   return (
     <main className="h-full w-full flex justify-center items-center flex-col">
       <Image
@@ -41,6 +63,7 @@ const Login = () => {
       <form
         action=""
         className="flex flex-col max-h-fit max-w-[500px] w-full gap-2 p-2"
+        onSubmit={handleSubmit}
       >
         <input
           name="email"

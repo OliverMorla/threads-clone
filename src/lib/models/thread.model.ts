@@ -1,8 +1,15 @@
 import mongoose from "mongoose";
 
 const threadSchema = new mongoose.Schema({
-  id: { type: String, required: true },
   text: { type: String, requred: true },
+  likes: {
+    type: Number,
+    default: 0,
+  },
+  replies: {
+    type: Number,
+    default: 0,
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
