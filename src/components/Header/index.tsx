@@ -10,9 +10,9 @@ import Link from "next/link";
 
 const Header = () => {
   const pathname = usePathname();
-  
+
   const { data: session } = useSession();
-  
+
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
 
   if (pathname.startsWith("/auth")) return null;
@@ -45,17 +45,29 @@ const Header = () => {
                   />
                 </li>
               );
-            } else {
+            } else if (item.name === "user") {
               return (
                 <Link
                   href={
-                    item.name === "user"
-                      ? //@ts-ignore
-                        `/@${session?.user.username}`
-                      : item.path
+                    // @ts-ignore
+                    session?.user ? `/@${session.user.username}` : `/auth/login`
                   }
                   key={index}
                 >
+                  <li className="p-4 cursor-pointer hover:opacity-50 hover: transition-all max-sm:hidden">
+                    <Image
+                      src={`/assets/icons/${item.name}.svg`}
+                      alt="Home"
+                      width={30}
+                      height={30}
+                      className="min-w-[20px] min-h-[20px]"
+                    />
+                  </li>
+                </Link>
+              );
+            } else {
+              return (
+                <Link href={item.path} key={index}>
                   <li className="p-4 cursor-pointer hover:opacity-50 hover: transition-all max-sm:hidden">
                     <Image
                       src={`/assets/icons/${item.name}.svg`}
