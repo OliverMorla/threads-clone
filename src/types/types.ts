@@ -32,7 +32,7 @@ interface ThreadProps {
     createdAt: string;
     likes: number;
     replies: number;
-    children: Thread[] | null;
+    childrenThreads: Thread[] | null;
     userId: string;
     threadId: string;
     userImage: string;    

@@ -40,6 +40,7 @@ const handler = NextAuth({
               image: user.avatar,
               name: user.name,
               email: user.email,
+              username: user.username,
             };
             return User;
           } else {
@@ -54,8 +55,13 @@ const handler = NextAuth({
   callbacks: {
     // Modifies the default session to better fit our application's user structure.
     async session({ session, token }) {
+      const user: User | null = await User.findOne({ _id: token.sub });
+
       // @ts-ignore
       session.user.id = token.sub;
+      // @ts-ignore
+      session.user.username = user.username;
+
       return session;
     },
 

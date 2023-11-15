@@ -10,14 +10,12 @@ import Link from "next/link";
 
 const Header = () => {
   const pathname = usePathname();
-  if (pathname.startsWith("/auth")) return null;
-
+  
   const { data: session } = useSession();
-  console.log(session);
+  
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
 
-  const [showCreateModal, setShowCreateModal] = useState(false);
-
-  console.log(showCreateModal);
+  if (pathname.startsWith("/auth")) return null;
 
   return (
     <header className="w-full flex justify-between max-w-[1230px] mx-auto p-4 items-center">
@@ -34,6 +32,7 @@ const Header = () => {
             if (item.name === "create") {
               return (
                 <li
+                  key={index}
                   className="p-4 cursor-pointer hover:opacity-50 hover: transition-all max-sm:hidden"
                   onClick={() => setShowCreateModal(!showCreateModal)}
                 >
@@ -48,15 +47,16 @@ const Header = () => {
               );
             } else {
               return (
-                <Link href={item.path} key={index}>
-                  <li
-                    className="p-4 cursor-pointer hover:opacity-50 hover: transition-all max-sm:hidden"
-                    onClick={() =>
-                      item.name === "create"
-                        ? setShowCreateModal(!showCreateModal)
-                        : null
-                    }
-                  >
+                <Link
+                  href={
+                    item.name === "user"
+                      ? //@ts-ignore
+                        `/@${session?.user.username}`
+                      : item.path
+                  }
+                  key={index}
+                >
+                  <li className="p-4 cursor-pointer hover:opacity-50 hover: transition-all max-sm:hidden">
                     <Image
                       src={`/assets/icons/${item.name}.svg`}
                       alt="Home"

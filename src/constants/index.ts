@@ -12,8 +12,8 @@ const NavigationItems = [
     path: "/create",
   },
   {
-    name: "notifications",
-    path: "/notifications",
+    name: "activity",
+    path: "/activity",
   },
   {
     name: "chat",

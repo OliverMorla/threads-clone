@@ -43,7 +43,7 @@ const Home = () => {
                   likes={thread.likes}
                   replies={thread.replies}
                   userId={thread.user._id}
-                  children={thread.children}
+                  childrenThreads={null}
                   userImage={thread.user.image}
                 />
               </>

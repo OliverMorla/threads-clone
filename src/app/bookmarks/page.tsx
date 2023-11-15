@@ -1,9 +1,9 @@
-const Chat = () => {
+const Bookmarks = () => {
   return (
     <main className="h-full w-full flex justify-center items-center">
-      <h1>Chat</h1>
+      <h1>Bookmarks</h1>
     </main>
   );
 };
 
-export default Chat;
+export default Bookmarks;

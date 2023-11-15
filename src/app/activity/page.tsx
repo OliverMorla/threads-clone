@@ -1,6 +1,6 @@
 const Activity = () => {
   return (
-    <main>
+    <main className="h-full w-full flex justify-center items-center">
       <h1>Activity</h1>
     </main>
   );

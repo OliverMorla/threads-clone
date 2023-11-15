@@ -8,6 +8,7 @@ const Thread = ({
   replies,
   threadId,
   userId,
+  childrenThreads,
 }: ThreadProps) => {
   return (
     <section className="max-w-[500px] w-full h-[auto] flex-col border-t-[1px] p-5">
