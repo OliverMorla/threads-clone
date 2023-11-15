@@ -3,10 +3,8 @@ import Thread from "@/lib/models/thread.model";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  await connectToDatabase();
-
   try {
-    const threads = await Thread.find({})
+    const threads = await Thread.find()
       .populate("user", "username")
       .sort({ createdAt: -1 });
 
