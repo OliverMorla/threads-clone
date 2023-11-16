@@ -1,9 +1,13 @@
+import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db/moongose";
 import Thread from "@/lib/models/thread.model";
-import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
+    await connectToDatabase().catch((err) => {
+      console.log(err instanceof Error && err.message);
+    });
+
     const threads = await Thread.find()
       .populate("user", "username")
       .sort({ createdAt: -1 });
