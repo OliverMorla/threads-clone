@@ -1,11 +1,9 @@
 "use client";
 import { useState } from "react";
-
-import Image from "next/image";
 import { redirect, useRouter } from "next/navigation";
-
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 
 const Login = () => {
   const { data: session } = useSession();

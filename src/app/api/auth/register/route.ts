@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import mongoose from "mongoose";
 import { connectToDatabase } from "@/lib/db/moongose";
 import bcrypt from "bcrypt";
 import User from "@/lib/models/user.model";

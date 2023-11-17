@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 const Register = () => {
-  const [input, setInput] = useState({
+  const [input, setInput] = useState<RegisterInput>({
     username: "",
     email: "",
     password: "",

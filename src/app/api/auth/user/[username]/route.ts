@@ -22,7 +22,9 @@ export async function GET(
     });
   }
 
-  await connectToDatabase();
+  await connectToDatabase().catch((err) => {
+    console.log(err instanceof Error && err.message);
+  });
 
   try {
     const user = await User.findOne({ username: username }).select({
@@ -30,7 +32,12 @@ export async function GET(
     });
 
     if (user) {
-      return NextResponse.json({ status: 200, ok: true, user: user });
+      return NextResponse.json({
+        status: 200,
+        ok: true,
+        data: user,
+        message: "User found!",
+      });
     } else {
       return NextResponse.json({
         status: 404,
