@@ -2,24 +2,36 @@ import mongoose from "mongoose";
 
 const threadSchema = new mongoose.Schema({
   text: { type: String, requred: true },
-  likes: {
-    type: Number,
-    default: 0,
-  },
-  replies: {
-    type: Number,
-    default: 0,
-  },
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: [],
+    },
+  ],
+  replies: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: [],
+    },
+  ],
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
+  images: [
+    {
+      type: String, 
+      default: [],
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,
   },
-  children: [
+  childrenThreads: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Thread",

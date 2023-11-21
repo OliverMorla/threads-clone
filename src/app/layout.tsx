@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Inter } from "next/font/google";
 
 import Footer from "@/components/Footer";
@@ -7,6 +8,7 @@ import Header from "@/components/Header";
 import AuthProvider from "@/providers/auth-providers";
 import ThreadProvider from "@/providers/thread-provider";
 
+import Loading from "./loading";
 import "./globals.css";
 
 const inter = Inter({
@@ -31,7 +33,7 @@ export default function RootLayout({
         <AuthProvider>
           <ThreadProvider>
             <Header />
-            {children}
+            <Suspense fallback={<Loading />}>{children}</Suspense>
             <Footer />
           </ThreadProvider>
         </AuthProvider>

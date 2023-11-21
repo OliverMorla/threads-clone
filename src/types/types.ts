@@ -1,14 +1,10 @@
 interface Thread {
   _id: string;
   text: string;
-  likes: number;
-  replies: number;
-  children: Thread[] | null;
-  user: {
-    _id: string;
-    username: string;
-    image: string;
-  };
+  likes: User[];
+  replies: User[];
+  childrenThreads: Thread[] | null;
+  user: User;
   createdAt: string;
   updatedAt: string;
 }
@@ -21,10 +17,12 @@ interface User {
   password: string;
   image: string;
   bio: string;
-  verified: boolean;
   threads: Thread[];
+  verified: boolean;
   createdAt: string;
-  updatedAt: string;
+  followers: User[];
+  following: User[];
+  bookmarks: Thread[];
 }
 
 interface ThreadCardProps {
@@ -73,6 +71,38 @@ interface ApiResponse<T> {
   ok: boolean;
   data?: T[];
 }
+
+interface ImageInfo {
+  filename: string;
+  name: string;
+  mime: string;
+  extension: string;
+  url: string;
+}
+
+interface ImageOptions {
+  id: string;
+  title: string;
+  url_viewer: string;
+  url: string;
+  display_url: string;
+  width: number;
+  height: number;
+  size: number;
+  time: number;
+  expiration: number;
+  image: ImageInfo;
+  thumb: ImageInfo;
+  medium: ImageInfo;
+  delete_url: string;
+}
+
+interface ImageUploadResponse {
+  data: ImageOptions;
+  success: boolean;
+  status: number;
+}
+
 
 interface UserResponse extends ApiResponse<User> {}
 interface ThreadResponse extends ApiResponse<Thread> {}

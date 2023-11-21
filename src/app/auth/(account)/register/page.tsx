@@ -29,6 +29,7 @@ const Register = () => {
       if (data.ok) {
         alert(data.message);
         // router.push("/auth/login");
+        window.location.href = "/auth/login"
       } else {
         throw new Error(data.message);
       }

@@ -97,4 +97,11 @@ const Thread = ({
   );
 };
 
-export { Thread };
+const ThreadWithChildren = ({}) => {
+  return (
+    <main>
+      <h1>Thread with children</h1>
+    </main>
+  );
+};
+export { Thread, ThreadWithChildren };

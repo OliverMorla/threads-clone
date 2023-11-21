@@ -30,7 +30,8 @@ const handler = NextAuth({
       async authorize(credentials: any, req): Promise<any> {
         await connectToDatabase();
         if (credentials) {
-          const user = await User.findOne({ email: credentials?.email });
+          const user = await User.findOne({ email: credentials?.email }).read("primary");
+           console.log(user)
           if (
             user &&
             bcrypt.compareSync(credentials?.password, user.password)

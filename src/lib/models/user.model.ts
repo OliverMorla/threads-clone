@@ -11,11 +11,41 @@ const userSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Thread",
+      default: [],
     },
   ],
   verified: {
     type: Boolean,
+    default: false,
   },
+  createdAt: {
+    type: String,
+    default: Date.now,
+  },
+  followers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      followedDate: Date,
+      default: [],
+    },
+  ],
+  following: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      followedDate: Date,
+      default: [],
+    },
+  ],
+
+  bookmarks: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Thread",
+      default: [],
+    },
+  ],
 });
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);

@@ -1,30 +1,30 @@
 "use client";
 
 import { Thread } from "@/components/Cards/Thread";
-import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import Image from "next/image";
 
+import useFetch from "@/hooks/useFetch";
+
 const Home = () => {
-  const [threads, setThreads] = useState<Thread[]>([]);
+  const {
+    data,
+    loading,
+    error,
+  }: {
+    data: Thread[] | null;
+    loading: boolean;
+    error: string | null;
+  } = useFetch("/api/auth/threads", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
-  const getThreads = async () => {
-    try {
-      const res = await fetch("/api/auth/threads");
-      const { data, ok, status, message } = await res.json();
-
-      if (ok) {
-        setThreads(data);
-      } else {
-        throw new Error(message);
-      }
-    } catch (err) {
-      if (err instanceof Error) alert(err.message);
-    }
-  };
-
-  useEffect(() => {
-    getThreads();
-  }, []);
+  const threads: Thread[] = useSelector(
+    (state: any) => state.threadReducer.threads
+  );
 
   console.log(threads);
 
@@ -50,9 +50,9 @@ const Home = () => {
         </button>
       </section>
       <section className="p-2 max-w-[575px] w-full">
-        {threads.length === 0
+        {threads?.length === 0
           ? "No threads"
-          : threads.map((thread) => (
+          : threads?.map((thread) => (
               <>
                 <Thread
                   key={thread._id}
@@ -60,8 +60,8 @@ const Home = () => {
                   threadId={thread._id}
                   username={thread.user.username}
                   createdAt={thread.createdAt}
-                  likes={thread.likes}
-                  replies={thread.replies}
+                  likes={thread.likes.length}
+                  replies={thread.replies.length}
                   userId={thread.user._id}
                   childrenThreads={null}
                   userImage={thread.user.image}

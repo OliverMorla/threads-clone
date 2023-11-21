@@ -1,34 +1,43 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 const initialState = {
-  threads: [
+  threads: <Thread[]>[
     {
-      id: "",
-      title: "",
-      content: "",
-      created_at: "",
-      updated_at: "",
+      _id: "",
+      text: "",
+      likes: [{ _id: "", image: "", username: "" }],
+      replies: [{ _id: "", image: "", username: "" }],
+      childrenThreads: null,
+      user: {
+        _id: "",
+        image: "",
+        username: "",
+      },
+      createdAt: "",
+      updatedAt: "",
     },
   ],
-  totalThreads: 0,
 };
 
 const threadSlice = createSlice({
   name: "thread",
   initialState,
   reducers: {
+    setThreads: (state, action) => {
+      state.threads = action.payload;
+    },
     createThread: (
       state,
       action: PayloadAction<{
-        id: string;
-        title: string;
-        content: string;
-        created_at: string;
-        updated_at: string;
+        text: string;
+        userId: string;
       }>
     ) => {},
+    deleteThread: (state, action: PayloadAction<{ threadId: string }>) => {},
+    likeThread: (state, action: PayloadAction<{ threadId: string }>) => {},
   },
 });
 
-export const { createThread } = threadSlice.actions;
+export const { createThread, deleteThread, likeThread, setThreads } =
+  threadSlice.actions;
 export default threadSlice.reducer;

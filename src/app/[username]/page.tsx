@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 
 const Profile = ({
@@ -33,7 +33,7 @@ const Profile = ({
     return () => {
       setUser(undefined);
     };
-  }, []);
+  }, [username]);
 
   return (
     <main className="h-full w-full flex justify-start flex-col items-center max-w-[500px] mx-auto">
@@ -50,7 +50,11 @@ const Profile = ({
         <section className="flex flex-col items-center">
           <section className="rounded-full bg-[--septenary] h-fit w-fit">
             <Image
-              src="/assets/icons/user.svg"
+              src={
+                session?.user?.image
+                  ? session.user.image
+                  : "/assets/icons/user.svg"
+              }
               className="p-2"
               alt="User"
               width={85}
