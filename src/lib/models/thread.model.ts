@@ -21,12 +21,11 @@ const threadSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  images: [
-    {
-      type: String, 
-      default: [],
-    },
-  ],
+  image: {
+    type: String,
+    default: null,
+  },
+
   createdAt: {
     type: Date,
     default: Date.now,
@@ -35,6 +34,7 @@ const threadSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Thread",
+      default: [],
     },
   ],
 });

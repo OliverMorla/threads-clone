@@ -1,16 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db/moongose";
 import { getToken } from "next-auth/jwt";
-import Thread from "@/lib/models/thread.model";
+import User from "@/lib/models/user.model";
 
-export async function POST(req: NextRequest) {
-  await connectToDatabase();
-
+export async function GET(req: NextRequest) {
   const user = await getToken({ req, secret: process.env.OAUTH_SECRET });
 
-  const { text } = await req.json();
+  const { username } = await req.json();
 
-  if (!text) {
+  if (!username) {
     return NextResponse.json({
       status: 400,
       ok: false,
@@ -20,13 +18,16 @@ export async function POST(req: NextRequest) {
 
   if (user) {
     try {
-      const thread = await Thread.create({ text, user: user?.sub });
+      const users = User.find({
+        username: { $regex: username, $options: "i" },
+      }).select("username image");
 
-      if (thread) {
+      if (users) {
         return NextResponse.json({
-          status: 201,
+          status: 200,
           ok: true,
-          message: "Thread created successfully",
+          message: "Users fetched successfully",
+          data: users,
         });
       }
     } catch (err) {
@@ -34,6 +35,7 @@ export async function POST(req: NextRequest) {
         status: 500,
         ok: false,
         message: "Something went wrong",
+        error: err instanceof Error ? err.message : null,
       });
     }
   } else {

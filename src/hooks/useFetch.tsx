@@ -20,10 +20,12 @@ const useFetch = (url: string, config: any) => {
         const res = await fetch(url, options);
         const response = await res.json();
 
+        console.log(response);
+
         if (response.ok) {
           setData(response.data);
           setLoading(false);
-          if (url === "/api/auth/threads") {
+          if (url === "/api/threads") {
             threadDispatch(setThreads(response.data));
           }
         } else {

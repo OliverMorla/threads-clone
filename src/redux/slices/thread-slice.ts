@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 const initialState = {
   threads: <Thread[]>[
     {
-      _id: "",
+      _id: "initialThread",
       text: "",
       likes: [{ _id: "", image: "", username: "" }],
       replies: [{ _id: "", image: "", username: "" }],
@@ -26,18 +26,47 @@ const threadSlice = createSlice({
     setThreads: (state, action) => {
       state.threads = action.payload;
     },
-    createThread: (
+    addThread: (
       state,
       action: PayloadAction<{
         text: string;
-        userId: string;
+        image: string;
+        user: {
+          username: string;
+          image: string;
+        };
       }>
-    ) => {},
-    deleteThread: (state, action: PayloadAction<{ threadId: string }>) => {},
+    ) => {
+      const {
+        text,
+        image,
+        user: { username, image: userImage },
+      } = action.payload;
+      state.threads.unshift({
+        _id: "",
+        image: "",
+        text: text,
+        likes: [{ _id: "", image: "", username: "" }],
+        replies: [{ _id: "", image: "", username: "" }],
+        childrenThreads: null,
+        user: {
+          _id: "",
+          image: userImage,
+          username: username,
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+    },
+    deleteThread: (state, action: PayloadAction<{ threadId: string }>) => {
+      state.threads = state.threads.filter(
+        (thread) => thread._id !== action.payload.threadId
+      );
+    },
     likeThread: (state, action: PayloadAction<{ threadId: string }>) => {},
   },
 });
 
-export const { createThread, deleteThread, likeThread, setThreads } =
+export const { addThread, deleteThread, likeThread, setThreads } =
   threadSlice.actions;
 export default threadSlice.reducer;

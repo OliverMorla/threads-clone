@@ -4,7 +4,10 @@ import Image from "next/image";
 import React, { useState, useEffect } from "react";
 
 const EditProfile = () => {
+  const IMAGE_UPLOAD_URL = process.env.NEXT_PUBLIC_IMGBB_URL;
+
   const { data: session } = useSession();
+
   const [user, setUser] = useState<User>();
   const [avatar, setAvatar] = useState<any>(null);
   const [updateUserInput, setUpdateUserInput] = useState<UpdateUserInput>({
@@ -15,20 +18,17 @@ const EditProfile = () => {
     bio: "",
   });
 
-  const IMAGE_UPLOAD_URL = process.env.NEXT_PUBLIC_IMGBB_URL;
-
   const handleAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const photo = e.target.files?.item(0);
 
-    const photoBase64 = URL.createObjectURL(photo as Blob)
     if (!photo) return;
 
     setUpdateUserInput((prevState) => ({
       ...prevState,
-      image: URL.createObjectURL(photo as Blob),
+      image: URL.createObjectURL(photo),
     }));
 
-    setAvatar(photoBase64);
+    setAvatar(e.target.files?.item(0));
   };
 
   const handleUploadAvatar = async () => {
@@ -43,16 +43,21 @@ const EditProfile = () => {
 
       const data = (await res.json()) as ImageUploadResponse;
 
-      console.log(data);
-
       if (data.success) {
-        setUpdateUserInput((prevState) => ({
-          ...prevState,
+        const updatedUserInput = {
+          ...updateUserInput,
           image: data.data.url,
-        }));
+        };
+        setUpdateUserInput(updatedUserInput);
+
+        return updatedUserInput;
       }
+
+      return null;
     } catch (err) {
       console.log(err);
+
+      return null;
     }
   };
 
@@ -60,41 +65,26 @@ const EditProfile = () => {
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     e.preventDefault();
-    if (avatar) {
-      await handleUploadAvatar();
-    }
 
-    // if (
-    //   updateUserInput.name === "" ||
-    //   updateUserInput.username === "" ||
-    //   updateUserInput.email === "" ||
-    //   updateUserInput.bio === ""
-    // ) {
-    //   setUpdateUserInput((prevState) => ({
-    //     ...prevState,
-    //     name: session?.user?.name as string,
-    //     // @ts-ignore
-    //     username: session?.user?.username as string,
-    //     email: session?.user?.email as string,
-    //     // @ts-ignore
-    //     bio: session?.user?.bio as string,
-    //   }));
-    // }
+    const updatedUserInput = await handleUploadAvatar();
 
-    try {
-      const res = await fetch("/api/auth/user/update", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updateUserInput),
-      });
-      const data = await res.json();
-      console.log(data);
-      if (!data.ok) throw new Error(data.message);
-      alert(data.message);
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Unknown error");
+    if (updatedUserInput) {
+      try {
+        const res = await fetch("/api/auth/user/update", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedUserInput),
+        });
+        const data = await res.json();
+        console.log(updateUserInput);
+        console.log(data);
+        if (!data.ok) throw new Error(data.message);
+        alert(data.message);
+      } catch (err) {
+        alert(err instanceof Error ? err.message : "Unknown error");
+      }
     }
   };
 
@@ -107,25 +97,18 @@ const EditProfile = () => {
         <form className="flex flex-col max-w-[575px] w-full items-center mx-auto gap-4">
           <section className="flex flex-col">
             <label htmlFor="image">Profile Image</label>
-            {session.user.image ? (
-              <Image
-                src={session.user.image}
-                width={85}
-                height={85}
-                alt="User"
-              />
-            ) : (
-              <Image
-                src={
-                  updateUserInput.image !== ""
-                    ? updateUserInput.image
-                    : "/assets/icons/user.svg"
-                }
-                alt="User"
-                width={85}
-                height={85}
-              />
-            )}
+
+            <Image
+              src={
+                updateUserInput.image !== ""
+                  ? updateUserInput.image
+                  : "/assets/icons/user.svg"
+              }
+              alt="User"
+              width={85}
+              height={85}
+            />
+
             <input
               type="file"
               name="image"

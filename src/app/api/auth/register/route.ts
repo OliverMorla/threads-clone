@@ -58,17 +58,8 @@ export async function POST(req: NextRequest) {
     if (encryptedPassword) {
       const user = await User.create({
         username,
-        name: null,
         email,
         password: encryptedPassword,
-        image: null,
-        bio: null,
-        verified: false,
-        threads: null,
-        createdAt: Date.now(),
-        following: null,
-        followers: null,
-        bookmarks: null,
       });
 
       if (user) {

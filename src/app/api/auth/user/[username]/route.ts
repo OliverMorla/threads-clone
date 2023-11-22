@@ -54,3 +54,43 @@ export async function GET(
     });
   }
 }
+
+export async function POST(req: NextRequest) {
+  const { tab, username }: {
+    tab: string
+    username: string
+  } = await req.json();
+
+  console.log(tab, username);
+
+  try {
+    const user = await User.findOne({
+      username: username,
+    }).populate({
+      path: tab.toLowerCase(),
+      populate: {
+        path: "user",
+        select: "username image",
+      },
+    });
+
+    console.log(user);
+
+    if (user) {
+      return NextResponse.json({
+        status: 200,
+        ok: true,
+        data: user,
+        message: "User found!",
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    return NextResponse.json({
+      status: 500,
+      ok: false,
+      message: "Failed to fetch user!",
+      prisma_error: err instanceof Error ? err.message : undefined,
+    });
+  }
+}

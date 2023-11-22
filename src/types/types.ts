@@ -1,10 +1,17 @@
+interface UserThreadProps {
+  _id: string;
+  username: string;
+  image: string;
+}
+
 interface Thread {
   _id: string;
   text: string;
-  likes: User[];
-  replies: User[];
+  likes: UserThreadProps[];
+  image: string;
+  replies: UserThreadProps[];
   childrenThreads: Thread[] | null;
-  user: User;
+  user: UserThreadProps;
   createdAt: string;
   updatedAt: string;
 }
@@ -31,6 +38,7 @@ interface ThreadCardProps {
   createdAt: string;
   likes: number;
   replies: number;
+  image: string;
   childrenThreads: Thread[] | null;
   userId: string;
   threadId: string;
@@ -39,6 +47,7 @@ interface ThreadCardProps {
 
 interface ThreadModalOptionsProps {
   userId: string;
+  threadId: string;
 }
 
 interface RegisterInput {

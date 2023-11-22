@@ -30,15 +30,15 @@ const handler = NextAuth({
       async authorize(credentials: any, req): Promise<any> {
         await connectToDatabase();
         if (credentials) {
-          const user = await User.findOne({ email: credentials?.email }).read("primary");
-           console.log(user)
+          const user = await User.findOne({ email: credentials?.email });
+          console.log(user);
           if (
             user &&
             bcrypt.compareSync(credentials?.password, user.password)
           ) {
             const User = {
               id: JSON.stringify(user._id).split('"')[1],
-              image: user.avatar,
+              image: user.image,
               name: user.name,
               email: user.email,
               username: user.username,
@@ -64,6 +64,8 @@ const handler = NextAuth({
       session.user.name = user.name;
       // @ts-ignore
       session.user.username = user.username;
+      // @ts-ignore
+      session.user.image = user.image;
 
       return session;
     },
