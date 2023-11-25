@@ -1,23 +1,25 @@
 "use client";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
+
+import { UpdateProfile } from "@/lib/actions/user.options";
 
 const EditProfile = () => {
-  const IMAGE_UPLOAD_URL = process.env.NEXT_PUBLIC_IMGBB_URL;
-
   const { data: session } = useSession();
 
-  const [user, setUser] = useState<User>();
-  const [avatar, setAvatar] = useState<any>(null);
+  const [avatar, setAvatar] = useState<Blob | File | null | undefined | string>(
+    null
+  );
   const [updateUserInput, setUpdateUserInput] = useState<UpdateUserInput>({
     image: "",
     name: "",
     username: "",
-    email: "",
     bio: "",
+    website: "",
   });
 
+  // handle current avatar locally before uploading to imgbb
   const handleAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const photo = e.target.files?.item(0);
 
@@ -31,73 +33,21 @@ const EditProfile = () => {
     setAvatar(e.target.files?.item(0));
   };
 
-  const handleUploadAvatar = async () => {
-    const form = new FormData();
-    form.append("image", avatar);
-
-    try {
-      const res = await fetch(IMAGE_UPLOAD_URL as string, {
-        method: "POST",
-        body: form,
-      });
-
-      const data = (await res.json()) as ImageUploadResponse;
-
-      if (data.success) {
-        const updatedUserInput = {
-          ...updateUserInput,
-          image: data.data.url,
-        };
-        setUpdateUserInput(updatedUserInput);
-
-        return updatedUserInput;
-      }
-
-      return null;
-    } catch (err) {
-      console.log(err);
-
-      return null;
-    }
-  };
-
+  // update profile with new data and avatar if changed on db
   const handleUpdateProfile = async (
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     e.preventDefault();
-
-    const updatedUserInput = await handleUploadAvatar();
-
-    if (updatedUserInput) {
-      try {
-        const res = await fetch("/api/auth/user/update", {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedUserInput),
-        });
-        const data = await res.json();
-        console.log(updateUserInput);
-        console.log(data);
-        if (!data.ok) throw new Error(data.message);
-        alert(data.message);
-      } catch (err) {
-        alert(err instanceof Error ? err.message : "Unknown error");
-      }
-    }
+    await UpdateProfile(updateUserInput, avatar);
   };
-
-  console.log(updateUserInput);
 
   if (session?.user) {
     return (
       <main className="h-full w-full flex flex-col justify-center items-center">
         <h1 className="font-bold text-2xl">Edit Profile</h1>
-        <form className="flex flex-col max-w-[575px] w-full items-center mx-auto gap-4">
+        <form className="flex flex-col max-w-[575px] w-full items-center mx-auto gap-4 p-2">
           <section className="flex flex-col">
             <label htmlFor="image">Profile Image</label>
-
             <Image
               src={
                 updateUserInput.image !== ""
@@ -142,8 +92,8 @@ const EditProfile = () => {
           />
           <input
             type="text"
-            name="email"
-            placeholder="Enter an email"
+            name="website"
+            placeholder="Enter a website"
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
             onChange={(e) =>
               setUpdateUserInput({

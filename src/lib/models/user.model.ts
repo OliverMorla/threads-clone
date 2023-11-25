@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   image: { type: String, default: null },
   bio: { type: String, default: null },
+  website: { type: String, default: null },
   likes: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -59,6 +60,10 @@ const userSchema = new mongoose.Schema({
   createdAt: {
     type: String,
     default: Date.now,
+  },
+  onBoarded: {
+    type: Boolean,
+    default: false,
   },
 });
 

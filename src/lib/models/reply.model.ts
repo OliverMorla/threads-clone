@@ -1,3 +1,5 @@
+// Not used at the moment
+
 import mongoose from "mongoose";
 
 const replySchema = new mongoose.Schema({

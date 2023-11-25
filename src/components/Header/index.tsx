@@ -22,18 +22,20 @@ const Header = () => {
   if (pathname.startsWith("/auth") && !pathname.includes("edit-profile"))
     return null;
 
-  if (!session?.user) return redirect("/auth/login");
+  // if (!session?.user) return redirect("/auth/login");
 
   return (
     <>
       <header className="w-full flex justify-between max-w-[1230px] mx-auto p-4 items-center">
-        <Image
-          src="/assets/icons/logo.svg"
-          alt="Logo"
-          width={30}
-          height={30}
-          className="max-h-[35px]"
-        />
+        <Link href={"/"}>
+          <Image
+            src="/assets/icons/logo.svg"
+            alt="Logo"
+            width={30}
+            height={30}
+            className="max-h-[35px] max-w-[35px] cursor-pointer hover:opacity-50 transition-all"
+          />
+        </Link>
         <nav>
           <ul className="list-none flex flex-row justify-center ">
             {NavigationItems.map((item, index) => {
@@ -110,7 +112,7 @@ const Header = () => {
         />
       </header>
       {showCreateModal ? (
-        <motion.section className="w-full h-full absolute flex justify-center items-center">
+        <motion.section className="w-full h-full absolute flex justify-center items-center z-20">
           <motion.div
             className="w-full h-full bg-black opacity-50 absolute cursor-pointer"
             initial={{ opacity: 0 }}
@@ -125,9 +127,9 @@ const Header = () => {
         </motion.section>
       ) : null}
       {showMenuModal ? (
-        <motion.section className="w-full h-full absolute flex justify-center items-center">
+        <motion.section className="w-full h-full absolute flex justify-center items-center ">
           <motion.div
-            className="w-full h-full bg-black opacity-50 absolute cursor-pointer"
+            className="w-full h-full bg-black opacity-50 absolute cursor-pointer z-10"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -145,7 +147,7 @@ const HeaderOptions = () => {
 
   return (
     <section className="flex flex-col justify-center items-start bg-zinc-900 z-10">
-      <section className="flex flex-col justify-center items-center gap-4 w-full p-4">
+      <section className="flex flex-col justify-center items-center gap-4 w-full p-4 cursor-pointer">
         {session?.user ? (
           <>
             <Image
@@ -174,18 +176,20 @@ const HeaderOptions = () => {
         <h1 className="text-white font-bold text-lg">Settings</h1>
       </section>
       {session?.user ? (
-        <section className="flex flex-row justify-center items-center gap-4 hover:bg-zinc-950 p-4">
+        <section
+          className="flex flex-row justify-center items-center gap-4 hover:bg-zinc-950 p-4 w-full cursor-pointer"
+          onClick={() =>
+            signOut({
+              callbackUrl: "/auth/login",
+              redirect: true,
+            })
+          }
+        >
           <Image
             src={"/assets/icons/logout.svg"}
             alt="Logout"
             width={30}
             height={30}
-            onClick={() =>
-              signOut({
-                callbackUrl: "/auth/login",
-                redirect: true,
-              })
-            }
           />
           <h1 className="text-white font-bold text-lg">Logout</h1>
         </section>

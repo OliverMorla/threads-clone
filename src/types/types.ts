@@ -35,6 +35,7 @@ interface User {
   followers: UserProps[];
   following: UserProps[];
   bookmarks: Thread[];
+  website: string;
 }
 
 interface ThreadCardProps {
@@ -68,8 +69,14 @@ interface UpdateUserInput {
   image: string;
   name: string;
   username: string;
-  email: string;
   bio: string;
+  website: string;
+}
+
+interface ThreadInput {
+  text: string;
+  image: string;
+  userId: string;
 }
 
 interface UpdatePasswordInput {

@@ -82,44 +82,73 @@ const Profile = ({
           </h2>
           <h3 className="text-sm flex gap-2 items-center">
             {user?.username}{" "}
+            {user?.verified ? (
+              <Image
+                src="/assets/icons/verified-filled.svg"
+                alt="Verified"
+                width={20}
+                height={20}
+              />
+            ) : (
+              <Image
+                src="/assets/icons/verified-outline.svg"
+                alt="Verified"
+                width={20}
+                height={20}
+                className="opacity-20 cursor-pointer"
+                title="Not Verified"
+              />
+            )}
             <p className="bg-[--septenary] text-xs rounded-md p-1">
               threads.net
             </p>
           </h3>
         </section>
         <section className="flex flex-col items-center">
-          <section className="rounded-full bg-[--septenary] h-fit w-fit">
+          <section className="rounded-full bg-[--septenary] h-fit w-fit border-[--octonary] border-[1px]">
             <Image
               src={
-                session?.user?.image
-                  ? session.user.image
+                user?.image
+                  ? user?.image
                   : "/assets/icons/user.svg"
               }
-              className="p-1 max-w-[85px] max-h-[85px] h-[85px] w-[85px] rounded-full object-cover"
+              className="max-w-[85px] max-h-[85px] h-[85px] w-[85px] rounded-full object-cover"
               alt="User"
               width={85}
               height={85}
             />
           </section>
-          {
-            // @ts-ignore
-            session?.user.username === username.split("%40")[1] && (
-              <Link href={"/auth/edit-profile"}>
-                <button className="bg-[--septenary] p-2 rounded-md mt-4 hover:bg-[--primary-hover] transition-colors">
-                  Edit Profile
-                </button>
-              </Link>
-            )
-          }
         </section>
       </section>
       <section className="p-4 opacity-60">
         <p>{user?.bio ? user.bio : "No bio exist"}</p>
       </section>
-      <section className="flex flex-col">
-        <section className="flex">
+
+      <section className="flex gap-2 text-xs opacity-60 justify-start w-full">
+        <section>{user?.followers.length} followers </section>
+        <span>·</span>
+        <section>{user?.following.length} following </section>
+        {user?.website && (
+          <section className="flex gap-2">
+            <span>·</span>
+            {user?.website}
+          </section>
+        )}
+      </section>
+      {
+        // @ts-ignore
+        session?.user.username === username.split("%40")[1] && (
+          <Link href={"/auth/edit-profile"} className="w-full">
+            <button className="bg-[--septenary] p-2 rounded-md mt-4 hover:bg-[--primary-hover] transition-colors w-full">
+              Edit Profile
+            </button>
+          </Link>
+        )
+      }
+      <section className="flex flex-col w-full">
+        <section className="flex w-full">
           <section
-            className="border-b-[1px] border-white px-10 py-3"
+            className="border-b-[1px] border-white px-10 py-3 flex-1"
             style={{
               opacity: tab === "Threads" ? 1 : 0.6,
             }}
@@ -134,7 +163,7 @@ const Profile = ({
             </Link>
           </section>
           <section
-            className="border-b-[1px] border-white px-10 py-3"
+            className="border-b-[1px] border-white px-10 py-3 flex-1"
             style={{
               opacity: tab === "Replies" ? 1 : 0.6,
             }}
@@ -149,7 +178,7 @@ const Profile = ({
             </Link>
           </section>
           <section
-            className="border-b-[1px] border-white px-10 py-3"
+            className="border-b-[1px] border-white px-10 py-3 flex-1"
             style={{
               opacity: tab === "Likes" ? 1 : 0.6,
             }}

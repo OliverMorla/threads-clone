@@ -8,6 +8,7 @@ import User from "@/lib/models/user.model";
 // get a thread
 export async function GET(req: NextRequest) {
   await connectToDatabase();
+
   const user = await getToken({ req, secret: process.env.OAUTH_SECRET });
 }
 
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
 
   const user = await getToken({ req, secret: process.env.OAUTH_SECRET });
 
-  const { text, image } = await req.json();
+  const { text, image, userId } = await req.json();
 
   if (!text) {
     return NextResponse.json({
@@ -57,8 +58,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         status: 500,
         ok: false,
-        message: "Something went wrong",
-        error: err instanceof Error ? err.message : null,
+        message: "Failed to create thread",
+        error: err instanceof Error ? err.message : "Failed to create thread",
       });
     }
   } else {
@@ -98,6 +99,21 @@ export async function DELETE(req: NextRequest) {
       const thread = await Thread.findOneAndDelete({
         _id: threadId,
       });
+
+      await User.findByIdAndUpdate(
+        {
+          _id: session.sub,
+        },
+        {
+          $pull: {
+            threads: threadId,
+            replies: threadId,
+            bookmarks: threadId,
+            likes: threadId,
+          },
+        }
+      );
+
 
       if (thread) {
         return NextResponse.json({

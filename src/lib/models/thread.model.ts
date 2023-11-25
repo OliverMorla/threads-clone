@@ -12,7 +12,7 @@ const threadSchema = new mongoose.Schema({
   replies: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Thread",
       default: [],
     },
   ],
@@ -30,6 +30,12 @@ const threadSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+
+  ParentId: {
+    type: String,
+    default: null,
+  },
+
   childrenThreads: [
     {
       type: mongoose.Schema.Types.ObjectId,

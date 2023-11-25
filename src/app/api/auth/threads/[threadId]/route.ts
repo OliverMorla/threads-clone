@@ -18,7 +18,7 @@ export async function GET(
     return NextResponse.json({
       status: 400,
       ok: false,
-      message: "Failed to read username!",
+      message: "Failed to find thread",
     });
   }
 
@@ -27,10 +27,21 @@ export async function GET(
   });
 
   try {
-    const thread = await Thread.findById({ _id: threadId }).populate({
-      path: "user",
-      select: "username image",
-    });
+    const thread = await Thread.findById({ _id: threadId })
+      .populate([
+        {
+          path: "user",
+          select: "username image",
+        },
+        {
+          path: "replies",
+          select: "text user createdAt replies likes",
+          populate: {
+            path: "user",
+            select: "username image"
+          }
+        },
+      ]).lean();
 
     if (thread) {
       return NextResponse.json({

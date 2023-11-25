@@ -11,7 +11,8 @@ export async function GET(req: NextRequest) {
 
     const threads = await Thread.find()
       .populate("user", "username image")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .where("replies");
 
     if (threads) {
       return NextResponse.json({

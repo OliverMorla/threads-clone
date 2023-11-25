@@ -7,40 +7,47 @@ export async function PUT(req: NextRequest) {
   await connectToDatabase();
   const session = await getToken({ req, secret: process.env.OAUTH_SECRET });
 
-  const { username, bio, name, email, image } = await req.json();
+  const { username, bio, name, email, image, website, password } =
+    await req.json();
 
-  if (!username || !bio || !name || !email || !image) {
-    return NextResponse.json({
-      status: 400,
-      ok: false,
-      message: "Missing required fields",
-    });
-  }
+  if (session) {
+    try {
+      const user: User | null = await User.findOne(
+        { _id: session?.sub },
+        { password: 0 }
+      );
 
-  try {
-    const user = await User.findOneAndUpdate(
-      { _id: session?.sub },
-      {
-        username,
-        bio,
-        name,
-        email,
-        image,
+      const updatedUser = await User.findOneAndUpdate(
+        { _id: session?.sub },
+        {
+          username: username !== "" ? username : user?.username,
+          bio: bio !== "" ? bio : user?.bio,
+          name: name !== "" ? name : user?.name,
+          email: email !== "" ? email : user?.email,
+          image: image !== "" ? image : user?.image,
+          website: website !== "" ? website : user?.website,
+        }
+      );
+
+      if (user) {
+        return NextResponse.json({
+          status: 200,
+          ok: true,
+          message: "User updated successfully",
+        });
       }
-    );
-
-    if (user) {
+    } catch (err) {
       return NextResponse.json({
-        status: 200,
-        ok: true,
-        message: "User updated successfully",
+        status: 500,
+        ok: false,
+        message: "Something went wrong",
       });
     }
-  } catch (err) {
+  } else {
     return NextResponse.json({
-      status: 500,
+      status: 401,
       ok: false,
-      message: "Something went wrong",
+      message: "You are not authorized",
     });
   }
 }

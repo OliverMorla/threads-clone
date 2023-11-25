@@ -150,7 +150,7 @@ const ThreadWithChildren = ({
                   className="rounded-full max-w-[35px] max-h-[35px] object-cover border-[--octonary] border-[1px]"
                 />
               </div>
-              {childrenThreads && (
+              {childrenThreads.length > 0 && (
                 <section className="bg-[--octonary] w-[1px] h-full block my-1">
                   &nbsp;
                 </section>
@@ -278,7 +278,8 @@ const ThreadWithChildren = ({
             originalThreadCreatedAt={createdAt}
             originalThreadText={text}
             originalThreadUsername={username}
-            originalThreadImage={userImage}
+            originalThreadUserImage={userImage}
+            originalThreadImage={threadImage}
           />
         </motion.section>
       ) : null}
@@ -287,16 +288,16 @@ const ThreadWithChildren = ({
           {replies.map((thread) => {
             return (
               <Thread
-                key={thread._id}
-                text={thread.text}
-                threadId={thread._id}
-                username={thread.user.username}
-                createdAt={thread.createdAt}
-                likes={thread.likes}
-                replies={thread.replies}
-                threadImage={thread.image}
-                userId={thread.user._id}
-                userImage={thread.user.image}
+                key={thread?._id}
+                text={thread?.text}
+                threadId={thread?._id}
+                username={thread?.user?.username}
+                createdAt={thread?.createdAt}
+                likes={thread?.likes}
+                replies={thread?.replies}
+                threadImage={thread?.image}
+                userId={thread?.user?._id}
+                userImage={thread?.user?.image}
               />
             );
           })}
@@ -453,6 +454,7 @@ const ThreadWithReplies = ({
             originalThreadText={text}
             originalThreadUsername={username}
             originalThreadImage={userImage}
+            originalThreadUserImage={userImage}
           />
         </motion.section>
       ) : null}

@@ -1,12 +1,17 @@
 "use client";
-import { useSession } from "next-auth/react";
+
 import { SetStateAction, useState, useRef } from "react";
-import { motion } from "framer-motion";
+import { useSession } from "next-auth/react";
 import { useDispatch } from "react-redux";
-import { deleteThread, addThread } from "@/redux/slices/thread-slice";
+import { motion } from "framer-motion";
 import EmojiPicker from "emoji-picker-react";
 import Image from "next/image";
+
 import { fadeVariant1 } from "@/config/framer-animations";
+
+import { deleteThread, addThread } from "@/redux/slices/thread-slice";
+
+import { CreateThread } from "@/lib/actions/thread.options";
 
 const CreateThreadModal = ({
   showCreateModal,
@@ -15,25 +20,28 @@ const CreateThreadModal = ({
   showCreateModal: boolean;
   setShowCreateModal: React.Dispatch<SetStateAction<boolean>>;
 }) => {
-  const IMAGE_UPLOAD_URL = process.env.NEXT_PUBLIC_IMGBB_URL;
-
-  const threadImageRef = useRef<HTMLInputElement>(null);
   const { data: session, status } = useSession();
-  const [threadImage, setThreadImage] = useState<any>(null);
-  const [threadImageUpload, setThreadImageUpload] = useState<any>(null);
 
   const dispatch = useDispatch();
 
-  const [threadInput, setThreadInput] = useState({
-    text: "",
+  const threadImageRef = useRef<HTMLInputElement>(null);
+
+  const [threadImage, setThreadImage] = useState<any>(null);
+  const [threadImageUpload, setThreadImageUpload] = useState<any>(null);
+  const [threadInput, setThreadInput] = useState<ThreadInput>({
     // @ts-ignore
     userId: session?.user.id,
+    text: "",
     image: "",
   });
 
   // handle thread image and sets the image to the threadImage state
   const handleThreadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setThreadImage(URL.createObjectURL(e.target.files?.item(0) as Blob));
+    setThreadInput({
+      ...threadInput,
+      image: URL.createObjectURL(e.target.files?.item(0) as Blob),
+    });
     setThreadImageUpload(e.target.files?.item(0));
   };
 
@@ -42,102 +50,26 @@ const CreateThreadModal = ({
     threadImageRef.current?.click();
   };
 
-  // handle thread image upload to imgbb
-  const handleThreadImageUpload = async () => {
-    const form = new FormData();
-    form.append("image", threadImageUpload);
+  // handle thread creation and dispatches the thread to the redux store
+  const handleCreateThread = async () => {
+    const data = await CreateThread(threadInput, threadImageUpload);
 
-    try {
-      const res = await fetch(IMAGE_UPLOAD_URL as string, {
-        method: "POST",
-        body: form,
-      });
-
-      const data = (await res.json()) as ImageUploadResponse;
-
-      if (data.success) {
-        const updatedThreadInput = {
-          ...threadInput,
-          image: data.data.url,
-        };
-        setThreadInput(updatedThreadInput);
-
-        return updatedThreadInput;
-      }
-      return null;
-    } catch (err) {
-      if (err instanceof Error) alert(err.message);
-      return null;
-    }
-  };
-
-  const createThread = async () => {
-    const updatedThreadInput = await handleThreadImageUpload();
-    console.log(updatedThreadInput);
-
-    if (updatedThreadInput) {
-      console.log(updatedThreadInput);
-      try {
-        const res = await fetch("/api/auth/threads", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+    if (data?.ok) {
+      dispatch(
+        addThread({
+          text: threadInput.text,
+          image: threadInput.image,
+          user: {
+            // @ts-ignore
+            _id: session?.user.id,
+            // @ts-ignore
+            image: session?.user.image,
+            // @ts-ignore
+            username: session?.user.username,
           },
-          body: JSON.stringify(updatedThreadInput),
-        });
-
-        const data = await res.json();
-        if (data.ok) {
-          alert(data.message);
-          dispatch(
-            addThread({
-              text: threadInput.text,
-              image: threadInput.image,
-              user: {
-                // @ts-ignore
-                image: session?.user.image,
-                // @ts-ignore
-                username: session?.user.username,
-              },
-            })
-          );
-        } else {
-          throw new Error(data.message);
-        }
-      } catch (err) {
-        if (err instanceof Error) alert(err.message);
-      }
-    } else {
-      try {
-        const res = await fetch("/api/auth/threads", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(threadInput),
-        });
-
-        const data = await res.json();
-        if (data.ok) {
-          alert(data.message);
-          dispatch(
-            addThread({
-              text: threadInput.text,
-              image: threadInput.image,
-              user: {
-                // @ts-ignore
-                image: session?.user.image,
-                // @ts-ignore
-                username: session?.user.username,
-              },
-            })
-          );
-        } else {
-          throw new Error(data.message);
-        }
-      } catch (err) {
-        if (err instanceof Error) alert(err.message);
-      }
+        })
+      );
+      alert(data?.message);
     }
   };
 
@@ -226,7 +158,7 @@ const CreateThreadModal = ({
         <h2 className="opacity-60">Your followers can reply</h2>
         <button
           className="bg-zinc-500 text-white px-4 py-2 rounded-xl mt-2 hover:bg-zinc-600 transition-all"
-          onClick={createThread}
+          onClick={handleCreateThread}
         >
           Post
         </button>
@@ -296,7 +228,7 @@ const ThreadModalOptions = ({ userId, threadId }: ThreadModalOptionsProps) => {
       variants={fadeVariant1}
       initial="hidden"
       animate="visible"
-      className="bg-zinc-900 text-white w-auto h-auto flex justify-start items-start flex-col right-0 top-0 absolute translate-x-20"
+      className="bg-zinc-900 text-white w-auto h-auto flex justify-start items-start flex-col right-0 top-0 absolute translate-x-28"
     >
       <ul className="flex flex-col justify-start">
         {
@@ -351,6 +283,7 @@ const ReplyThreadModal = ({
   originalThreadText,
   originalThreadImage,
   originalThreadCreatedAt,
+  originalThreadUserImage,
 }: {
   showCreateModal: boolean;
   setShowCreateModal: React.Dispatch<SetStateAction<boolean>>;
@@ -359,29 +292,30 @@ const ReplyThreadModal = ({
   originalThreadText: string;
   originalThreadImage: string;
   originalThreadCreatedAt: string;
+  originalThreadUserImage: string;
 }) => {
-  const IMAGE_UPLOAD_URL = process.env.NEXT_PUBLIC_IMGBB_URL;
-
-  const threadImageRef = useRef<HTMLInputElement>(null);
-
-  const { data: session } = useSession();
-
-  const [threadImage, setThreadImage] = useState<any>(null);
-  const [threadImageUpload, setThreadImageUpload] = useState<any>(null);
+  const { data: session, status } = useSession();
 
   const dispatch = useDispatch();
 
-  const [threadInput, setThreadInput] = useState({
-    originalThreadId,
-    text: "",
+  const threadImageRef = useRef<HTMLInputElement>(null);
+
+  const [threadImage, setThreadImage] = useState<any>(null);
+  const [threadImageUpload, setThreadImageUpload] = useState<any>(null);
+  const [threadInput, setThreadInput] = useState<ThreadInput>({
     // @ts-ignore
     userId: session?.user.id,
+    text: "",
     image: "",
   });
 
   // handle thread image and sets the image to the threadImage state
   const handleThreadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setThreadImage(URL.createObjectURL(e.target.files?.item(0) as Blob));
+    setThreadInput({
+      ...threadInput,
+      image: URL.createObjectURL(e.target.files?.item(0) as Blob),
+    });
     setThreadImageUpload(e.target.files?.item(0));
   };
 
@@ -390,105 +324,12 @@ const ReplyThreadModal = ({
     threadImageRef.current?.click();
   };
 
-  // handle thread image upload to imgbb
-  const handleThreadImageUpload = async () => {
-    const form = new FormData();
-    form.append("image", threadImageUpload);
+  // handle thread creation and dispatches the thread to the redux store
+  const handleCreateThread = async () => {
+    const data = await CreateThread(threadInput, threadImageUpload);
 
-    try {
-      const res = await fetch(IMAGE_UPLOAD_URL as string, {
-        method: "POST",
-        body: form,
-      });
-
-      const data = (await res.json()) as ImageUploadResponse;
-
-      if (data.success) {
-        const updatedThreadInput = {
-          ...threadInput,
-          image: data.data.url,
-        };
-        setThreadInput(updatedThreadInput);
-
-        return updatedThreadInput;
-      }
-      return null;
-    } catch (err) {
-      if (err instanceof Error) alert(err.message);
-      return null;
-    }
-  };
-
-  // create thread reply to original thread
-  const createThread = async () => {
-    const updatedThreadInput = await handleThreadImageUpload();
-
-    if (updatedThreadInput) {
-      try {
-        const res = await fetch("/api/auth/reply", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedThreadInput),
-        });
-
-        const data = await res.json();
-        if (data.ok) {
-          alert(data.message);
-          // dispatch(
-          //   addThread({
-          //     text: threadInput.text,
-          //     image: threadInput.image,
-          //     user: {
-          //       // @ts-ignore
-          //       _id: session?.user._id,
-          //       // @ts-ignore
-          //       image: session?.user.image,
-          //       // @ts-ignore
-          //       username: session?.user.username,
-          //     },
-          //   })
-          // );
-        } else {
-          throw new Error(data.message);
-        }
-      } catch (err) {
-        if (err instanceof Error) alert(err.message);
-      }
-    } else {
-      try {
-        const res = await fetch("/api/auth/reply", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(threadInput),
-        });
-
-        const data = await res.json();
-        if (data.ok) {
-          alert(data.message);
-          // dispatch(
-          //   addThread({
-          //     text: threadInput.text,
-          //     image: threadInput.image,
-          //     user: {
-          //       // @ts-ignore
-          //       _id: session?.user._id,
-          //       // @ts-ignore
-          //       image: session?.user.image,
-          //       // @ts-ignore
-          //       username: session?.user.username,
-          //     },
-          //   })
-          // );
-        } else {
-          throw new Error(data.message);
-        }
-      } catch (err) {
-        if (err instanceof Error) alert(err.message);
-      }
+    if (data?.ok) {
+      alert(data?.message);
     }
   };
 
@@ -501,7 +342,7 @@ const ReplyThreadModal = ({
       <section className="flex w-full">
         <section className="rounded-full bg-[--septenary] h-fit w-fit">
           <Image
-            src={originalThreadImage || "/assets/icons/user.svg"}
+            src={originalThreadUserImage || "/assets/icons/user.svg"}
             width={75}
             height={75}
             className="p-2 rounded-full max-w-[75px] max-h-[75px] object-cover"
@@ -621,7 +462,7 @@ const ReplyThreadModal = ({
         <h2 className="opacity-60">Your followers can reply</h2>
         <button
           className="bg-zinc-500 text-white px-4 py-2 rounded-xl mt-2 hover:bg-zinc-600 transition-all"
-          onClick={createThread}
+          onClick={handleCreateThread}
         >
           Post
         </button>
