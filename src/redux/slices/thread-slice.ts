@@ -4,17 +4,17 @@ const initialState = {
   threads: <Thread[]>[
     {
       _id: "initialThread",
-      text: "",
-      likes: [{ _id: "", image: "", username: "" }],
-      replies: [{ _id: "", image: "", username: "" }],
-      childrenThreads: null,
+      text: "initialThread",
+      likes: [],
+      replies: [],
       user: {
-        _id: "",
-        image: "",
-        username: "",
+        _id: "initialThread",
+        image: "initialThread",
+        username: "initialThread",
       },
-      createdAt: "",
-      updatedAt: "",
+      createdAt: "initialThread",
+      image: "initialThread",
+      childrenThreads: [],
     },
   ],
 };
@@ -26,36 +26,25 @@ const threadSlice = createSlice({
     setThreads: (state, action) => {
       state.threads = action.payload;
     },
-    addThread: (
-      state,
-      action: PayloadAction<{
-        text: string;
-        image: string;
-        user: {
-          username: string;
-          image: string;
-        };
-      }>
-    ) => {
+    addThread: (state, action: PayloadAction<Thread>) => {
       const {
         text,
         image,
-        user: { username, image: userImage },
+        user: { _id: userId, username, image: userImage },
       } = action.payload;
       state.threads.unshift({
-        _id: "",
-        image: "",
+        _id: "newThread",
+        image: image,
         text: text,
-        likes: [{ _id: "", image: "", username: "" }],
-        replies: [{ _id: "", image: "", username: "" }],
-        childrenThreads: null,
+        likes: [],
+        replies: [],
         user: {
-          _id: "",
+          _id: userId,
           image: userImage,
           username: username,
         },
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        childrenThreads: [],
       });
     },
     deleteThread: (state, action: PayloadAction<{ threadId: string }>) => {
@@ -63,7 +52,26 @@ const threadSlice = createSlice({
         (thread) => thread._id !== action.payload.threadId
       );
     },
-    likeThread: (state, action: PayloadAction<{ threadId: string }>) => {},
+    likeThread: (
+      state,
+      action: PayloadAction<{
+        threadId: string;
+        userImage: string;
+        username: string;
+      }>
+    ) => {
+      state.threads.map((thread) => {
+        if (thread._id === action.payload.threadId) {
+          thread.likes.push({
+            _id: "user",
+            image: action.payload.userImage,
+            username: action.payload.username,
+          });
+        } else {
+          return null;
+        }
+      });
+    },
   },
 });
 

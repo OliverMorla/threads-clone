@@ -4,45 +4,53 @@ interface UserThreadProps {
   image: string;
 }
 
+interface UserProps {
+  _id: string;
+  username: string;
+  image: string;
+}
+
 interface Thread {
   _id: string;
   text: string;
   likes: UserThreadProps[];
+  replies: Thread[];
   image: string;
-  replies: UserThreadProps[];
-  childrenThreads: Thread[] | null;
+  childrenThreads: Thread[];
   user: UserThreadProps;
   createdAt: string;
-  updatedAt: string;
 }
 
 interface User {
   _id: string;
   username: string;
-  name: string;
+  name: string | null;
   email: string;
   password: string;
-  image: string;
-  bio: string;
+  image: string | null;
+  bio: string | null;
   threads: Thread[];
   verified: boolean;
   createdAt: string;
-  followers: User[];
-  following: User[];
+  followers: UserProps[];
+  following: UserProps[];
   bookmarks: Thread[];
 }
 
 interface ThreadCardProps {
-  username: string;
-  text: string;
-  createdAt: string;
-  likes: number;
-  replies: number;
-  image: string;
-  childrenThreads: Thread[] | null;
-  userId: string;
   threadId: string;
+  threadImage: string;
+  text: string;
+  replies: Thread[];
+  createdAt: string;
+  likes: UserThreadProps[];
+  userId: string;
+  username: string;
   userImage: string;
+}
+
+interface ThreadCardWithChildrenProps extends ThreadCardProps {
+  childrenThreads: Thread[];
 }
 
 interface ThreadModalOptionsProps {
@@ -111,7 +119,6 @@ interface ImageUploadResponse {
   success: boolean;
   status: number;
 }
-
 
 interface UserResponse extends ApiResponse<User> {}
 interface ThreadResponse extends ApiResponse<Thread> {}

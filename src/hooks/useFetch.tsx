@@ -6,7 +6,7 @@ const useFetch = (url: string, config: any) => {
   const options = useMemo(() => config, [config]);
 
   const threadDispatch = useDispatch();
-
+  
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -20,13 +20,12 @@ const useFetch = (url: string, config: any) => {
         const res = await fetch(url, options);
         const response = await res.json();
 
-        console.log(response);
-
         if (response.ok) {
           setData(response.data);
           setLoading(false);
           if (url === "/api/threads") {
             threadDispatch(setThreads(response.data));
+            setLoading(false);
           }
         } else {
           throw new Error(response.message);
@@ -38,7 +37,6 @@ const useFetch = (url: string, config: any) => {
       }
     };
     fetchData();
-    
   }, [url, options]);
 
   return { data, loading, error };

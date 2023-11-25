@@ -1,13 +1,13 @@
 "use client";
 import { useState } from "react";
-import { redirect, useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import Image from "next/image";
 
 const Login = () => {
   const { data: session } = useSession();
-  const router = useRouter();
 
   if (session?.user) redirect("/");
 
@@ -56,6 +56,9 @@ const Login = () => {
         <section>
           <h1 className="text-4xl font-bold">Threads</h1>
           <h2 className="text-2xl font-bold">Clone</h2>
+          <p>
+            Email: guest@threads.com <br /> Password: password
+          </p>
         </section>
       </h1>
       <form
@@ -84,7 +87,15 @@ const Login = () => {
         />
       </form>
       <section className="text-center">
-        <h4>Forgot Password?</h4>
+        <h4>
+          Forgot Password ·{" "}
+          <Link
+            href={"/auth/register"}
+            className="hover:font-bold transition-all"
+          >
+            Register
+          </Link>
+        </h4>
         <p>or</p>
         <button className="bg-transparent border-[1px] border-white rounded-lg p-4 flex gap-2 items-center hover:bg-[--septenary] hover:text-[--quinary] transition-all">
           <Image

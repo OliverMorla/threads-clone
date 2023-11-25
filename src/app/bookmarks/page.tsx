@@ -1,18 +1,20 @@
 "use client";
 
 import { Fragment } from "react";
-import { Thread } from "@/components/Cards/Thread";
-
+import { useSession } from "next-auth/react";
 import useFetch from "@/hooks/useFetch";
+import { Thread } from "@/components/Cards/Thread";
 import { LoadingWithoutBg } from "@/components/Loading";
 
 const Bookmarks = () => {
+  const { data: session } = useSession();
+
   const {
     data: threads,
     loading,
     error,
   }: {
-    data: any
+    data: any;
     loading: boolean;
     error: string | null;
   } = useFetch("/api/auth/bookmarks", {
@@ -21,8 +23,6 @@ const Bookmarks = () => {
       "Content-Type": "application/json",
     },
   });
-
-  console.log(threads);
 
   return (
     <main className="h-full w-full flex justify-center items-center flex-col">
@@ -40,11 +40,10 @@ const Bookmarks = () => {
                     threadId={thread._id}
                     username={thread.user.username}
                     createdAt={thread.createdAt}
-                    likes={thread.likes.length}
-                    replies={thread.replies.length}
-                    image={thread.image}
+                    likes={thread.likes}
+                    replies={thread.replies}
+                    threadImage={thread.image}
                     userId={thread.user._id}
-                    childrenThreads={null}
                     userImage={thread.user.image}
                   />
                 </Fragment>

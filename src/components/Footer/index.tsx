@@ -11,7 +11,7 @@ const Footer = () => {
       <ul className="list-none flex gap-2 items-center justify-center max-w-[1230px] mx-auto text-[--quinary] opacity-40 text-xs p-4 max-sm:flex-col">
         {session?.user && (
           <Image
-            src={"/assets/icons/log-out.svg"}
+            src={"/assets/icons/logout.svg"}
             width={25}
             height={25}
             alt="Log Out"

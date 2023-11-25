@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useEffect, useState, Fragment } from "react";
@@ -48,7 +49,6 @@ const Profile = ({
       const { data, ok, status, message } = await res.json();
       console.log(data, ok, status, message);
       if (ok) {
-        // setUser(data);
         setTabData(data);
       } else {
         throw new Error(message);
@@ -169,7 +169,6 @@ const Profile = ({
             // @ts-ignore
             tabData && tabData[tab?.toLowerCase()].length > 0 ? (
               // @ts-ignore
-
               tabData[tab?.toLowerCase()]?.map((thread: Thread) => (
                 <Fragment key={thread?._id}>
                   <Thread
@@ -178,17 +177,16 @@ const Profile = ({
                     threadId={thread?._id}
                     username={thread?.user?.username}
                     createdAt={thread?.createdAt}
-                    likes={thread?.likes?.length}
-                    replies={thread?.replies?.length}
-                    image={thread?.image}
+                    likes={thread?.likes}
+                    replies={thread?.replies}
+                    threadImage={thread?.image}
                     userId={thread?.user?._id}
-                    childrenThreads={null}
                     userImage={thread?.user?.image}
                   />
                 </Fragment>
               ))
             ) : (
-              <h1 className="text-center p-2">No data</h1>
+              <h1 className="text-center p-2">No Threads Available</h1>
             )
           }
         </section>

@@ -1,6 +1,6 @@
 "use client";
+
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 
 const Register = () => {
@@ -9,8 +9,6 @@ const Register = () => {
     email: "",
     password: "",
   });
-
-  const router = useRouter();
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -28,8 +26,7 @@ const Register = () => {
       const data = await res.json();
       if (data.ok) {
         alert(data.message);
-        // router.push("/auth/login");
-        window.location.href = "/auth/login"
+        window.location.href = "/auth/login";
       } else {
         throw new Error(data.message);
       }
