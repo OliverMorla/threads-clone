@@ -24,7 +24,6 @@ const useFetch = (url: string, config: any) => {
         if (response.ok) {
           setData(response.data);
           setLoading(false);
-          revalidatePath("/");
           
           if (url === "/api/threads") {
             threadDispatch(setThreads(response.data));
