@@ -5,83 +5,7 @@ import { getToken } from "next-auth/jwt";
 import Thread from "@/lib/models/thread.model";
 import User from "@/lib/models/user.model";
 
-// get a thread
-export async function GET(req: NextRequest) {
-  await connectToDatabase();
-
-  const user = await getToken({ req, secret: process.env.OAUTH_SECRET });
-}
-
-// create a new thread
 export async function POST(req: NextRequest) {
-  await connectToDatabase();
-
-  const user = await getToken({ req, secret: process.env.OAUTH_SECRET });
-
-  const { text, image, userId } = await req.json();
-
-  if (!text) {
-    return NextResponse.json({
-      status: 400,
-      ok: false,
-      message: "Missing required fields",
-    });
-  }
-
-  if (user) {
-    try {
-      const thread = await Thread.create({
-        text,
-        user: user.sub,
-        image: image || null,
-      });
-
-      const userWithThread = await User.findByIdAndUpdate(
-        {
-          _id: user.sub,
-        },
-        {
-          $push: {
-            threads: thread._id,
-          },
-        }
-      );
-
-      if (thread && userWithThread) {
-        return NextResponse.json({
-          status: 201,
-          ok: true,
-          message: "Thread created successfully",
-        });
-      }
-    } catch (err) {
-      return NextResponse.json({
-        status: 500,
-        ok: false,
-        message: "Failed to create thread",
-        error: err instanceof Error ? err.message : "Failed to create thread",
-      });
-    }
-  } else {
-    return NextResponse.json({
-      status: 401,
-      ok: false,
-      message: "You are not authenticated",
-    });
-  }
-}
-
-// edit a thread
-export async function PUT(req: NextRequest) {
-  await connectToDatabase();
-
-  const user = await getToken({ req, secret: process.env.OAUTH_SECRET });
-}
-
-// delete a thread
-export async function DELETE(req: NextRequest) {
-  await connectToDatabase();
-
   const session = await getToken({ req, secret: process.env.OAUTH_SECRET });
 
   const { threadId } = await req.json();
@@ -94,46 +18,97 @@ export async function DELETE(req: NextRequest) {
     });
   }
 
+  await connectToDatabase().catch((err) => {
+    console.log(err instanceof Error && err.message);
+  });
+
   if (session) {
     try {
-      const thread = await Thread.findByIdAndDelete({
-        _id: threadId,
-      });
-
-      await User.findByIdAndUpdate(
+      const like = await Thread.findByIdAndUpdate(
         {
-          _id: session.sub,
+          _id: threadId,
         },
         {
-          $pull: {
-            likes: threadId,
-            threads: threadId,
-            replies: threadId,
-            bookmarks: threadId,
+          $push: {
+            likes: session.sub,
           },
         }
       );
 
-      if (thread) {
+      if (like) {
         return NextResponse.json({
-          status: 200,
+          status: 201,
           ok: true,
-          message: "Thread deleted successfully",
+          message: "Liked successfully",
         });
       }
     } catch (err) {
       return NextResponse.json({
         status: 500,
         ok: false,
-        message: "Something went wrong",
+        message: "Failed to like thread",
         error: err instanceof Error ? err.message : null,
       });
     }
   } else {
     return NextResponse.json({
       status: 401,
+      message: "You need to be authenticated to like a thread",
       ok: false,
-      message: "You are not authenticated",
+    });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  const session = await getToken({ req, secret: process.env.OAUTH_SECRET });
+
+  const { threadId } = await req.json();
+
+  if (!threadId) {
+    return NextResponse.json({
+      status: 400,
+      ok: false,
+      message: "Missing required fields",
+    });
+  }
+
+  await connectToDatabase().catch((err) => {
+    console.log(err instanceof Error && err.message);
+  });
+
+  if (session) {
+    try {
+      const like = await Thread.findByIdAndUpdate(
+        {
+          _id: threadId,
+        },
+        {
+          $pull: {
+            likes: session.sub,
+          },
+        }
+      );
+
+      if (like) {
+        return NextResponse.json({
+          status: 201,
+          ok: true,
+          message: "Unliked successfully",
+        });
+      }
+    } catch (err) {
+      return NextResponse.json({
+        status: 500,
+        ok: false,
+        message: "Failed to unlike thread",
+        error: err instanceof Error ? err.message : null,
+      });
+    }
+  } else {
+    return NextResponse.json({
+      status: 401,
+      message: "You need to be authenticated to unlike a thread",
+      ok: false,
     });
   }
 }

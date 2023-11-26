@@ -9,12 +9,12 @@ export const connectToDatabase = async () => {
     return console.log("=> Connection already exists");
   }
 
-  if (!process.env.MONGODB_URL) {
+  if (!process.env.MONGODB_URI) {
     return console.log("=> MONGODB_CONNECTION_STRING is not defined");
   }
 
   try {
-    await mongoose.connect(process.env.MONGODB_URL!);
+    await mongoose.connect(process.env.MONGODB_URI!);
     isConnected = true;
     console.log("=> Connected to database");
   } catch (err) {

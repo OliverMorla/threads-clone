@@ -12,6 +12,8 @@ export async function POST(req: NextRequest) {
 
   const { originalThreadId, text, image } = await req.json();
 
+  console.log(originalThreadId);
+
   if (!text) {
     return NextResponse.json({
       status: 400,
@@ -27,8 +29,10 @@ export async function POST(req: NextRequest) {
         text,
         user: user.sub,
         image: image || null,
+        parentId: originalThreadId,
+        isReply: true,
       });
-      
+
       // add thread to user
       const addReplyToThread = await Thread.findByIdAndUpdate(
         {

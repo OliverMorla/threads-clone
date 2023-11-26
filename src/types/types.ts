@@ -19,6 +19,8 @@ interface Thread {
   childrenThreads: Thread[];
   user: UserThreadProps;
   createdAt: string;
+  parentId: string | null;
+  isReply: boolean;
 }
 
 interface User {
@@ -77,6 +79,10 @@ interface ThreadInput {
   text: string;
   image: string;
   userId: string;
+}
+
+interface ReplyInput extends ThreadInput {
+  originalThreadId: string;
 }
 
 interface UpdatePasswordInput {

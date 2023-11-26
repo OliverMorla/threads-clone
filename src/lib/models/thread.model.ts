@@ -25,17 +25,18 @@ const threadSchema = new mongoose.Schema({
     type: String,
     default: null,
   },
-
   createdAt: {
     type: Date,
     default: Date.now,
   },
-
-  ParentId: {
+  parentId: {
     type: String,
     default: null,
   },
-
+  isReply: {
+    type: Boolean,
+    default: false,
+  },
   childrenThreads: [
     {
       type: mongoose.Schema.Types.ObjectId,

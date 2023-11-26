@@ -14,6 +14,8 @@ const initialState = {
       },
       createdAt: "initialThread",
       image: "initialThread",
+      isReply: false,
+      parentId: "initialThread",
       childrenThreads: [],
     },
   ],
@@ -45,6 +47,8 @@ const threadSlice = createSlice({
         },
         createdAt: new Date().toISOString(),
         childrenThreads: [],
+        isReply: false,
+        parentId: "newThread",
       });
     },
     deleteThread: (state, action: PayloadAction<{ threadId: string }>) => {

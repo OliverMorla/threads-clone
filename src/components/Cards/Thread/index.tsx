@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import {
   ReplyThreadModal,
+  StartThreadModal,
   ThreadModalOptions,
 } from "@/components/Modals/Thread";
 
@@ -33,11 +34,13 @@ const Thread = ({
                   alt="/assets/icons/user.svg"
                   width={35}
                   height={35}
-                  className="max-w-[35px] max-h-[35px] object-cover border-[--octonary] border-[1px]"
+                  className="max-w-[35px] max-h-[35px] min-h-[35px] object-cover border-[--octonary] border-[1px]"
                 />
               </section>
               <section className="flex justify-between w-full">
-                <h1 className="ml-2 font-bold">{username}</h1>
+                <h1 className="ml-2 font-bold">
+                  <Link href={`/@${username}`}>{username}</Link>
+                </h1>
                 <Image
                   src={"/assets/icons/ellipsis-horizontal-sharp.svg"}
                   alt="/assets/icons/verified.svg"
@@ -134,10 +137,14 @@ const ThreadWithChildren = ({
 }: ThreadCardWithChildrenProps) => {
   const [showOptionsModal, setShowOptionsModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+  const [showStartThreadModal, setShowStartThreadModal] =
+    useState<boolean>(false);
+
+  console.log(childrenThreads);
 
   return (
     <section className="flex flex-col">
-      <section className="relative max-w-[575px] w-full h-[auto] flex-col border-b-[1px] border-[--octonary]">
+      <section className="relative max-w-[575px] w-full h-[auto] flex-col border-[--octonary]">
         <section className="flex flex-row">
           <div className="flex justify-between items-start">
             <section className="flex flex-col items-center h-full">
@@ -150,11 +157,14 @@ const ThreadWithChildren = ({
                   className="rounded-full max-w-[35px] max-h-[35px] object-cover border-[--octonary] border-[1px]"
                 />
               </div>
-              {childrenThreads.length > 0 && (
+              {/* {childrenThreads?.length && (
                 <section className="bg-[--octonary] w-[1px] h-full block my-1">
                   &nbsp;
                 </section>
-              )}
+              )} */}
+              <section className="bg-[--octonary] w-[1px] h-full block my-1">
+                &nbsp;
+              </section>
             </section>
           </div>
 
@@ -215,6 +225,7 @@ const ThreadWithChildren = ({
                   width={25}
                   height={25}
                   className="rounded-full cursor-pointer hover:scale-105 hover:opacity-60 transition-all"
+                  onClick={() => setShowStartThreadModal(!showCreateModal)}
                 />
               </div>
               <div className="flex items-center">
@@ -283,23 +294,47 @@ const ThreadWithChildren = ({
           />
         </motion.section>
       ) : null}
+
+      {showStartThreadModal ? (
+        <motion.section className="w-full h-full top-0 left-0 absolute flex justify-center items-center">
+          <motion.div
+            className="w-full h-full bg-black opacity-50 absolute cursor-pointer"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowStartThreadModal(!showStartThreadModal)}
+          />
+          <StartThreadModal
+            showStartThreadModal={showStartThreadModal}
+            setShowStartThreadModal={setShowStartThreadModal}
+            originalThreadId={threadId}
+            originalThreadCreatedAt={createdAt}
+            originalThreadText={text}
+            originalThreadUsername={username}
+            originalThreadUserImage={userImage}
+            originalThreadImage={threadImage}
+          />
+        </motion.section>
+      ) : null}
       {replies ? (
         <section className="flex flex-col">
           {replies.map((thread) => {
-            return (
-              <Thread
-                key={thread?._id}
-                text={thread?.text}
-                threadId={thread?._id}
-                username={thread?.user?.username}
-                createdAt={thread?.createdAt}
-                likes={thread?.likes}
-                replies={thread?.replies}
-                threadImage={thread?.image}
-                userId={thread?.user?._id}
-                userImage={thread?.user?.image}
-              />
-            );
+            if (thread.isReply && thread.parentId === threadId) {
+              return (
+                <Thread
+                  key={thread?._id}
+                  text={thread?.text}
+                  threadId={thread?._id}
+                  username={thread?.user?.username}
+                  createdAt={thread?.createdAt}
+                  likes={thread?.likes}
+                  replies={thread?.replies}
+                  threadImage={thread?.image}
+                  userId={thread?.user?._id}
+                  userImage={thread?.user?.image}
+                />
+              );
+            }
           })}
         </section>
       ) : (

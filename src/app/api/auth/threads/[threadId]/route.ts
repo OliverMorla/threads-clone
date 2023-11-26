@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db/moongose";
+import { getToken } from "next-auth/jwt";
 import Thread from "@/lib/models/thread.model";
+import User from "@/lib/models/user.model";
 
 type Params = {
   threadId: string;
@@ -35,13 +37,22 @@ export async function GET(
         },
         {
           path: "replies",
+          select: "text user createdAt replies likes isReply parentId",
+          populate: {
+            path: "user",
+            select: "username image",
+          },
+        },
+        {
+          path: "childrenThreads",
           select: "text user createdAt replies likes",
           populate: {
             path: "user",
-            select: "username image"
-          }
+            select: "username image",
+          },
         },
-      ]).lean();
+      ])
+      .lean();
 
     if (thread) {
       return NextResponse.json({
@@ -75,46 +86,74 @@ export async function POST(
     params: Params;
   }
 ) {
+  const session = await getToken({ req, secret: process.env.OAUTH_SECRET });
+
   if (!threadId) {
     return NextResponse.json({
       status: 400,
       ok: false,
-      message: "Failed to read username!",
+      message: "Failed to find thread!",
     });
   }
 
-  const { childrenThreadId } = await req.json();
+  const { originalThreadId, text } = await req.json();
+
+  if (!originalThreadId) {
+    return NextResponse.json({
+      status: 400,
+      ok: false,
+      message: "Missing required fields!",
+    });
+  }
 
   await connectToDatabase().catch((err) => {
     console.log(err instanceof Error && err.message);
   });
 
-  try {
-    const reply = await Thread.findByIdAndUpdate(
-      { _id: threadId },
-      { $push: { childrenThreads: childrenThreadId } }
-    );
+  if (session) {
+    try {
+      const repost = await Thread.create({
+        text,
+        user: session.sub,
+        parentId: threadId,
+        isReply: false,
+      });
 
-    if (reply) {
-      return NextResponse.json({
-        status: 200,
-        ok: true,
-        message: "Reply added successfully!",
-        data: reply,
-      });
-    } else {
-      return NextResponse.json({
-        status: 404,
-        ok: false,
-        message: "Failed to add reply!",
-      });
-    }
-  } catch (err) {
+      const addRepostToThread = await Thread.findByIdAndUpdate(
+        {
+          _id: threadId,
+        },
+        {
+          $push: {
+            childrenThreads: repost._id,
+          },
+        }
+      );
+
+      const addRepostToUser = await User.findByIdAndUpdate(
+        {
+          _id: session.sub,
+        },
+        {
+          $push: {
+            threads: repost._id,
+          },
+        }
+      );
+
+      if (repost && addRepostToThread && addRepostToUser) {
+        return NextResponse.json({
+          status: 201,
+          ok: true,
+          message: "Repost created successfully!",
+        });
+      }
+    } catch (err) {}
+  } else {
     return NextResponse.json({
-      status: 500,
+      status: 401,
       ok: false,
-      message: "Failed to add reply!",
-      error: err instanceof Error ? err.message : undefined,
+      message: "You are not authenticated!",
     });
   }
 }
