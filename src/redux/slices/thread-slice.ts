@@ -56,29 +56,33 @@ const threadSlice = createSlice({
         (thread) => thread._id !== action.payload.threadId
       );
     },
-    likeThread: (
+    addThreadLike: (
       state,
       action: PayloadAction<{
         threadId: string;
+        userId: string;
         userImage: string;
         username: string;
       }>
     ) => {
       state.threads.map((thread) => {
-        if (thread._id === action.payload.threadId) {
+        if (thread.likes.find((like) => like._id === action.payload.userId)) {
+          thread.likes = thread.likes.filter(
+            (like) => like._id !== action.payload.userId
+          );
+          state.threads = [...state.threads, thread];
+        } else {
           thread.likes.push({
-            _id: "user",
+            _id: action.payload.userId,
             image: action.payload.userImage,
             username: action.payload.username,
           });
-        } else {
-          return null;
         }
       });
     },
   },
 });
 
-export const { addThread, deleteThread, likeThread, setThreads } =
+export const { addThread, deleteThread, addThreadLike, setThreads } =
   threadSlice.actions;
 export default threadSlice.reducer;

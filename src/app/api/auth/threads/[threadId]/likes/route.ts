@@ -5,7 +5,7 @@ import { getToken } from "next-auth/jwt";
 import Thread from "@/lib/models/thread.model";
 import User from "@/lib/models/user.model";
 
-export async function POST(req: NextRequest) {
+export async function PUT(req: NextRequest) {
   const session = await getToken({ req, secret: process.env.OAUTH_SECRET });
 
   const { threadId } = await req.json();
@@ -24,7 +24,48 @@ export async function POST(req: NextRequest) {
 
   if (session) {
     try {
-      const like = await Thread.findByIdAndUpdate(
+      const doesLikeExist = await Thread.find({
+        _id: threadId,
+        likes: {
+          $in: [session.sub],
+        },
+      });
+
+      console.log(doesLikeExist);
+
+      if (doesLikeExist.length > 0){
+        const removeLikeFromThread = await Thread.findByIdAndUpdate(
+          {
+            _id: threadId,
+          },
+          {
+            $pull: {
+              likes: session.sub,
+            },
+          }
+        );
+  
+        const removeLikeFromUser = await User.findByIdAndUpdate(
+          {
+            _id: session.sub,
+          },
+          {
+            $pull: {
+              likes: threadId,
+            },
+          }
+        );
+  
+        if (removeLikeFromThread && removeLikeFromUser) {
+          return NextResponse.json({
+            status: 201,
+            ok: true,
+            message: "Unliked successfully",
+          });
+        }
+      }
+      
+      const addLikeToThread = await Thread.findByIdAndUpdate(
         {
           _id: threadId,
         },
@@ -35,7 +76,18 @@ export async function POST(req: NextRequest) {
         }
       );
 
-      if (like) {
+      const addLikeToUser = await User.findByIdAndUpdate(
+        {
+          _id: session.sub,
+        },
+        {
+          $push: {
+            likes: threadId,
+          },
+        }
+      );
+
+      if (addLikeToThread && addLikeToUser) {
         return NextResponse.json({
           status: 201,
           ok: true,

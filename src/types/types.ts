@@ -1,7 +1,9 @@
 interface UserThreadProps {
   _id: string;
   username: string;
+  userImage?: string;
   image: string;
+  userId?: string;
 }
 
 interface UserProps {

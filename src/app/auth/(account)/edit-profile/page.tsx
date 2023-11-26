@@ -3,7 +3,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import Image from "next/image";
 
-import { UpdateProfile } from "@/lib/actions/user.options";
+import { UpdateProfile } from "@/lib/options/user.options";
 
 const EditProfile = () => {
   const { data: session } = useSession();

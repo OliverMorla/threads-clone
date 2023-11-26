@@ -6,7 +6,7 @@ const useFetch = (url: string, config: any) => {
   const options = useMemo(() => config, [config]);
 
   const threadDispatch = useDispatch();
-  
+
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { useDispatch } from "react-redux";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -8,6 +10,8 @@ import {
   StartThreadModal,
   ThreadModalOptions,
 } from "@/components/Modals/Thread";
+import { LikeThread } from "@/lib/options/thread.options";
+import { addThreadLike } from "@/redux/slices/thread-slice";
 
 // Thread without children
 const Thread = ({
@@ -22,6 +26,21 @@ const Thread = ({
   threadId,
 }: ThreadCardProps) => {
   const [showOptionsModal, setShowOptionsModal] = useState(false);
+
+  const { data: session } = useSession();
+
+  const dispatch = useDispatch();
+
+  const handleLikeThread = async () => {
+    const data = await LikeThread(threadId);
+
+    if (data) {
+      dispatch(addThreadLike({ threadId, userId, username, userImage }));
+    }
+  };
+
+  console.log(likes);
+
   return (
     <section>
       <section className="relative max-w-[575px] w-full h-[auto] flex-col border-t-[1px] py-4 border-[--octonary]">
@@ -72,13 +91,28 @@ const Thread = ({
         </section>
         <section className="flex gap-4 pr-2 py-2">
           <div className="flex items-center">
-            <Image
-              src="/assets/icons/like.svg"
-              alt="Like"
-              width={25}
-              height={25}
-              className="rounded-full cursor-pointer hover:scale-105 hover:opacity-60 transition-all"
-            />
+            {
+              // @ts-ignore
+              likes?.find((user) => user._id === session?.user?.id) ? (
+                <Image
+                  src="/assets/icons/like-filled.svg"
+                  alt="Like"
+                  width={25}
+                  height={25}
+                  className="rounded-full cursor-pointer hover:scale-105 hover:opacity-60 transition-all"
+                  onClick={handleLikeThread}
+                />
+              ) : (
+                <Image
+                  src="/assets/icons/like.svg"
+                  alt="Like"
+                  width={25}
+                  height={25}
+                  className="rounded-full cursor-pointer hover:scale-105 hover:opacity-60 transition-all"
+                  onClick={handleLikeThread}
+                />
+              )
+            }
           </div>
           <div className="flex items-center">
             <Link href={`/@${username}/post/${threadId}`}>

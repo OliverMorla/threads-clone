@@ -10,7 +10,16 @@ export async function GET(req: NextRequest) {
     });
 
     const threads = await Thread.find()
-      .populate("user", "username image")
+      .populate([
+        {
+          path: "user",
+          select: "username image",
+        },
+        {
+          path: "likes",
+          select: "username image",
+        },
+      ])
       .sort({ createdAt: -1 })
       .where("parentId", [null, undefined]);
 
@@ -27,7 +36,7 @@ export async function GET(req: NextRequest) {
       status: 500,
       ok: false,
       message: "Something went wrong",
-      error: err instanceof Error ? err.message : null
+      error: err instanceof Error ? err.message : null,
     });
   }
 }

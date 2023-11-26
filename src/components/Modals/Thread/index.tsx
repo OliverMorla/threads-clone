@@ -11,7 +11,7 @@ import { fadeVariant1 } from "@/config/framer-animations";
 
 import { deleteThread, addThread } from "@/redux/slices/thread-slice";
 
-import { ReplyToThread, CreateThread, StartThread } from "@/lib/actions/thread.options";
+import { ReplyToThread, CreateThread, StartThread } from "@/lib/options/thread.options";
 
 const CreateThreadModal = ({
   showCreateModal,

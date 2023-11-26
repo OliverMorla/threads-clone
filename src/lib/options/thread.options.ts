@@ -1,7 +1,9 @@
+// fetch threads from the server
 async function fetchThreads(limit: string) {
   const res = await fetch("/api/threads");
 }
 
+// upload thread image to imgbb and return the url
 async function UploadThreadImage(
   threadInput: ThreadInput,
   threadImage: Blob | File | null | undefined | string
@@ -113,13 +115,16 @@ async function StartThread(
     );
   }
   try {
-    const res = await fetch(`/api/auth/threads/${threadInput.originalThreadId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updatedThreadInputWithImage || threadInput),
-    });
+    const res = await fetch(
+      `/api/auth/threads/${threadInput.originalThreadId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedThreadInputWithImage || threadInput),
+      }
+    );
 
     const data = await res.json();
 
@@ -131,4 +136,34 @@ async function StartThread(
   }
 }
 
-export { UploadThreadImage, DeleteThread, EditThread, CreateThread, ReplyToThread, StartThread };
+async function LikeThread(threadId: string) {
+  try {
+    const res = await fetch(`/api/auth/threads/${threadId}/likes`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ threadId }),
+    });
+
+    const data = await res.json();
+
+    console.log(data);
+
+    if (!data.ok) throw new Error(data.message);
+
+    return data;
+  } catch (err) {
+    alert(err instanceof Error ? err.message : null);
+  }
+}
+
+export {
+  UploadThreadImage,
+  DeleteThread,
+  EditThread,
+  CreateThread,
+  ReplyToThread,
+  StartThread,
+  LikeThread,
+};

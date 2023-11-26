@@ -1,6 +1,5 @@
 "use server";
 
-import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db/moongose";
 import User from "../models/user.model";
 

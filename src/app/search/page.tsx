@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { useSession } from "next-auth/react";
 import { useState, useEffect, use } from "react";
 import Image from "next/image";
-import { redirect } from "next/navigation";
 import { fetchUsers } from "@/lib/actions/search.actions";
 import Link from "next/link";
 
