@@ -26,9 +26,6 @@ const Home = () => {
     headers: {
       "Content-Type": "application/json",
     },
-    next: {
-      revalidate: 1,
-    },
   });
 
   // get threads from redux store
