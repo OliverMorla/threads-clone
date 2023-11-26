@@ -1,9 +1,10 @@
 "use client";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 
 import { UpdateProfile } from "@/lib/options/user.options";
+import { UploadButton, Uploader } from "@/utils/uploadthing";
 
 const EditProfile = () => {
   const { data: session } = useSession();
@@ -20,17 +21,17 @@ const EditProfile = () => {
   });
 
   // handle current avatar locally before uploading to imgbb
-  const handleAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const photo = e.target.files?.item(0);
-
-    if (!photo) return;
+  const handleAvatar = (file: File[]) => {
+    // if (!photo) return;
 
     setUpdateUserInput((prevState) => ({
       ...prevState,
-      image: URL.createObjectURL(photo),
+      image: URL.createObjectURL(file[0]),
     }));
 
-    setAvatar(e.target.files?.item(0));
+    setAvatar(file[0]);
+
+    return file;
   };
 
   // update profile with new data and avatar if changed on db
@@ -38,15 +39,23 @@ const EditProfile = () => {
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     e.preventDefault();
-    await UpdateProfile(updateUserInput, avatar);
+
+    uploadRef.current?.click();
+
+    if (updateUserInput.image.includes("https://"))
+      await UpdateProfile(updateUserInput);
   };
+
+  const uploadRef = useRef<HTMLButtonElement>(null);
+
+  console.log(updateUserInput);
 
   if (session?.user) {
     return (
       <main className="h-full w-full flex flex-col justify-center items-center">
         <h1 className="font-bold text-2xl">Edit Profile</h1>
         <form className="flex flex-col max-w-[575px] w-full items-center mx-auto gap-4 p-2">
-          <section className="flex flex-col">
+          <section className="flex flex-col items-center">
             <label htmlFor="image">Profile Image</label>
             <Image
               src={
@@ -58,12 +67,25 @@ const EditProfile = () => {
               width={85}
               height={85}
             />
-
-            <input
-              type="file"
-              name="image"
-              onChange={handleAvatar}
-              accept="image/*"
+            <UploadButton
+              endpoint={"media"}
+              onBeforeUploadBegin={(file) => handleAvatar(file)}
+              onUploadBegin={(res) => {
+                console.log(res);
+              }}
+              onClientUploadComplete={(res) =>
+                setUpdateUserInput((prevState) => {
+                  return {
+                    ...prevState,
+                    image: res[0].url,
+                  };
+                })
+              }
+              config={{
+                mode: "manual",
+              }}
+              onUploadProgress={(progress) => console.log(progress)}
+              onUploadError={(err) => console.log(err)}
             />
           </section>
           <input

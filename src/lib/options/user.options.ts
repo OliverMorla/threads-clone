@@ -1,15 +1,14 @@
 async function UpdateProfile(
   updateUserInput: UpdateUserInput,
-  localAvatar: Blob | File | null | undefined | string
 ) {
-  let updatedUserInputWithPhoto;
+  // let updatedUserInputWithPhoto;
 
-  if (updateUserInput.image !== "") {
-    updatedUserInputWithPhoto = await UploadProfilePhoto(
-      updateUserInput,
-      localAvatar
-    );
-  }
+  // if (updateUserInput.image !== "") {
+  //   updatedUserInputWithPhoto = await UploadProfilePhoto(
+  //     updateUserInput,
+  //     localAvatar
+  //   );
+  // }
 
   try {
     const res = await fetch("/api/auth/user/update", {
@@ -17,7 +16,7 @@ async function UpdateProfile(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(updatedUserInputWithPhoto),
+      body: JSON.stringify(updateUserInput),
     });
     const data = await res.json();
     if (!data.ok) throw new Error(data.message);

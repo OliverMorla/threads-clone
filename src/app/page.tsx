@@ -2,13 +2,14 @@
 
 import { useSelector } from "react-redux";
 import { useSession } from "next-auth/react";
-import Image from "next/image";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 import useFetch from "@/hooks/useFetch";
 import { Thread } from "@/components/Cards/Thread";
 import { LoadingWithoutBg } from "@/components/Loading";
 import { fadeVariant1 } from "@/config/framer-animations";
+import { UploadButton } from "@/utils/uploadthing";
 
 const Home = () => {
   // get threads from api then store in redux store
