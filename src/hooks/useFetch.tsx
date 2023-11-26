@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { setThreads } from "@/redux/slices/thread-slice";
+import { revalidatePath } from "next/cache";
 
 const useFetch = (url: string, config: any) => {
   const options = useMemo(() => config, [config]);
@@ -23,6 +24,8 @@ const useFetch = (url: string, config: any) => {
         if (response.ok) {
           setData(response.data);
           setLoading(false);
+          revalidatePath("/");
+          
           if (url === "/api/threads") {
             threadDispatch(setThreads(response.data));
             setLoading(false);

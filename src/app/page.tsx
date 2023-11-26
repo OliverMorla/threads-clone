@@ -9,8 +9,8 @@ import useFetch from "@/hooks/useFetch";
 import { Thread } from "@/components/Cards/Thread";
 import { LoadingWithoutBg } from "@/components/Loading";
 import { fadeVariant1 } from "@/config/framer-animations";
-import { UploadButton } from "@/utils/uploadthing";
-
+import { revalidatePath } from "next/cache";
+  
 const Home = () => {
   // get threads from api then store in redux store
   const {
@@ -32,6 +32,7 @@ const Home = () => {
   const threads: Thread[] = useSelector(
     (state: any) => state.threadReducer.threads
   );
+
 
   const { data: session } = useSession();
 
