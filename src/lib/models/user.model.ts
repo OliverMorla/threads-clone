@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-  username: { type: String, requred: true },
+  username: { type: String, requred: true, unique: true },
   name: { type: String, default: null },
-  email: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   image: { type: String, default: null },
   bio: { type: String, default: null },
@@ -33,16 +33,14 @@ const userSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      default: [],
-      followedDate: Date,
+      followedDate: { type: String, default: Date.now }
     },
   ],
   following: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      default: [],
-      followedDate: Date.now,
+      followedDate: { type: String, default: Date.now }
     },
   ],
 

@@ -12,8 +12,6 @@ const auth = async (req: NextRequest) => {
   return session;
 };
 
-
-
 const f = createUploadthing();
 
 // FileRouter for your app, can contain multiple FileRoutes

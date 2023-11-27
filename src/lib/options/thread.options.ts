@@ -4,36 +4,36 @@ async function fetchThreads(limit: string) {
 }
 
 // upload thread image to imgbb and return the url
-async function UploadThreadImage(
-  threadInput: ThreadInput,
-  threadImage: Blob | File | null | undefined | string
-) {
-  if (!threadImage) return;
+// async function UploadThreadImage(
+//   threadInput: ThreadInput,
+//   threadImage: Blob | File | null | undefined | string
+// ) {
+//   if (!threadImage) return;
 
-  const form = new FormData();
-  form.append("image", threadImage);
+//   const form = new FormData();
+//   form.append("image", threadImage);
 
-  try {
-    const res = await fetch(process.env.NEXT_PUBLIC_IMGBB_URL!, {
-      method: "POST",
-      body: form,
-    });
+//   try {
+//     const res = await fetch(process.env.NEXT_PUBLIC_IMGBB_URL!, {
+//       method: "POST",
+//       body: form,
+//     });
 
-    const data = (await res.json()) as ImageUploadResponse;
+//     const data = (await res.json()) as ImageUploadResponse;
 
-    if (data.success) {
-      const updatedThreadInputWithImage = {
-        ...threadInput,
-        image: data.data.url,
-      };
-      return updatedThreadInputWithImage;
-    }
+//     if (data.success) {
+//       const updatedThreadInputWithImage = {
+//         ...threadInput,
+//         image: data.data.url,
+//       };
+//       return updatedThreadInputWithImage;
+//     }
 
-    return null;
-  } catch (err) {
-    alert(err instanceof Error ? err.message : "Unknown error");
-  }
-}
+//     return null;
+//   } catch (err) {
+//     alert(err instanceof Error ? err.message : "Unknown error");
+//   }
+// }
 
 async function DeleteThread(threadId: string) {}
 
@@ -41,16 +41,16 @@ async function EditThread(threadId: string, text: string) {}
 
 async function CreateThread(
   threadInput: ThreadInput,
-  threadImage: Blob | File | null | undefined | string
+  // threadImage: Blob | File | null | undefined | string
 ) {
-  let updatedThreadInputWithImage;
+  // let updatedThreadInputWithImage;
 
-  if (threadImage) {
-    updatedThreadInputWithImage = await UploadThreadImage(
-      threadInput,
-      threadImage
-    );
-  }
+  // if (threadImage) {
+  //   updatedThreadInputWithImage = await UploadThreadImage(
+  //     threadInput,
+  //     threadImage
+  //   );
+  // }
 
   try {
     const res = await fetch("/api/auth/threads", {
@@ -58,7 +58,7 @@ async function CreateThread(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(updatedThreadInputWithImage || threadInput),
+      body: JSON.stringify(threadInput),
     });
 
     const data = await res.json();
@@ -75,21 +75,22 @@ async function ReplyToThread(
   threadInput: ThreadInput,
   threadImage: Blob | File | null | undefined | string
 ) {
-  let updatedThreadInputWithImage;
+  // let updatedThreadInputWithImage;
 
-  if (threadImage) {
-    updatedThreadInputWithImage = await UploadThreadImage(
-      threadInput,
-      threadImage
-    );
-  }
+  // if (threadImage) {
+  //   updatedThreadInputWithImage = await UploadThreadImage(
+  //     threadInput,
+  //     threadImage
+  //   );
+  // }
+
   try {
     const res = await fetch("/api/auth/reply", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(updatedThreadInputWithImage || threadInput),
+      body: JSON.stringify(threadInput),
     });
 
     const data = await res.json();
@@ -106,14 +107,15 @@ async function StartThread(
   threadInput: ReplyInput,
   threadImage: Blob | File | null | undefined | string
 ) {
-  let updatedThreadInputWithImage;
+  // let updatedThreadInputWithImage;
 
-  if (threadImage) {
-    updatedThreadInputWithImage = await UploadThreadImage(
-      threadInput,
-      threadImage
-    );
-  }
+  // if (threadImage) {
+  //   updatedThreadInputWithImage = await UploadThreadImage(
+  //     threadInput,
+  //     threadImage
+  //   );
+  // }
+
   try {
     const res = await fetch(
       `/api/auth/threads/${threadInput.originalThreadId}`,
@@ -122,7 +124,7 @@ async function StartThread(
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(updatedThreadInputWithImage || threadInput),
+        body: JSON.stringify(threadInput),
       }
     );
 
@@ -159,7 +161,7 @@ async function LikeThread(threadId: string) {
 }
 
 export {
-  UploadThreadImage,
+  // UploadThreadImage,
   DeleteThread,
   EditThread,
   CreateThread,

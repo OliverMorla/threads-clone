@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Thread } from "@/components/Cards/Thread";
+import { addFollowToUser } from "@/lib/actions/follow.actions";
 
 const Profile = ({
   params: { username },
@@ -27,6 +28,7 @@ const Profile = ({
     try {
       const res = await fetch(endpoint);
       const { data, ok, status, message } = await res.json();
+      console.log(data.followers, ok, status, message);
       if (ok) {
         setUser(data);
       } else {
@@ -48,6 +50,7 @@ const Profile = ({
       });
       const { data, ok, status, message } = await res.json();
       console.log(data, ok, status, message);
+
       if (ok) {
         setTabData(data);
       } else {
@@ -72,6 +75,26 @@ const Profile = ({
       postData(`/api/auth/user/${username.split("%40")[1]}`);
     }
   }, [tab]);
+
+  const handleFollow = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (!user) return;
+
+    if (e.currentTarget.name === "follow") {
+      const data = await addFollowToUser(user?._id, "follow");
+      if (data.ok) {
+        alert(data.message);
+      } else {
+        alert(data);
+      }
+    } else if (e.currentTarget.name === "unfollow") {
+      const data = await addFollowToUser(user?._id, "unfollow");
+      if (data.ok) {
+        alert(data.message);
+      } else {
+        alert(data);
+      }
+    }
+  };
 
   return (
     <main className="h-full w-full flex justify-start flex-col items-center max-w-[500px] mx-auto">
@@ -107,11 +130,7 @@ const Profile = ({
         <section className="flex flex-col items-center">
           <section className="rounded-full bg-[--septenary] h-fit w-fit border-[--octonary] border-[1px]">
             <Image
-              src={
-                user?.image
-                  ? user?.image
-                  : "/assets/icons/user.svg"
-              }
+              src={user?.image ? user?.image : "/assets/icons/user.svg"}
               className="max-w-[85px] max-h-[85px] h-[85px] w-[85px] rounded-full object-cover"
               alt="User"
               width={85}
@@ -135,6 +154,41 @@ const Profile = ({
           </section>
         )}
       </section>
+
+      {
+        // @ts-ignore
+        session?.user.username !== username.split("%40")[1] &&
+          !user?.followers?.find(
+            // @ts-ignore
+            (follower: any) => follower === session?.user.id
+          ) && (
+            <button
+              className="bg-[--septenary] p-2 rounded-md mt-4 hover:bg-[--primary-hover] transition-colors w-full"
+              name="follow"
+              onClick={handleFollow}
+            >
+              Follow
+            </button>
+          )
+      }
+
+      {
+        // @ts-ignore
+        session?.user.username !== username.split("%40")[1] &&
+          user?.followers?.find(
+            // @ts-ignore
+            (follower) => follower === session?.user.id
+          ) && (
+            <button
+              className="bg-[--septenary] p-2 rounded-md mt-4 hover:bg-[--primary-hover] transition-colors w-full"
+              name="unfollow"
+              onClick={handleFollow}
+            >
+              Unfollow
+            </button>
+          )
+      }
+
       {
         // @ts-ignore
         session?.user.username === username.split("%40")[1] && (

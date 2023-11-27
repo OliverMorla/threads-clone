@@ -1,17 +1,16 @@
 "use client";
-import { useSession } from "next-auth/react";
-import { useState, useRef } from "react";
-import Image from "next/image";
 
+import { useSession } from "next-auth/react";
+import { useState } from "react";
+import Image from "next/image";
+import { UploadButton } from "@/utils/uploadthing";
 import { UpdateProfile } from "@/lib/options/user.options";
-import { UploadButton, Uploader } from "@/utils/uploadthing";
 
 const EditProfile = () => {
+  // get session data from next-auth
   const { data: session } = useSession();
 
-  const [avatar, setAvatar] = useState<Blob | File | null | undefined | string>(
-    null
-  );
+  // set up state for user input to update profile
   const [updateUserInput, setUpdateUserInput] = useState<UpdateUserInput>({
     image: "",
     name: "",
@@ -21,17 +20,15 @@ const EditProfile = () => {
   });
 
   // handle current avatar locally before uploading to imgbb
-  const handleAvatar = (file: File[]) => {
-    // if (!photo) return;
-
+  const handleAvatar = (image: File[]) => {
+    // set image to preview
     setUpdateUserInput((prevState) => ({
       ...prevState,
-      image: URL.createObjectURL(file[0]),
+      image: URL.createObjectURL(image[0]),
     }));
 
-    setAvatar(file[0]);
-
-    return file;
+    // return image to upload
+    return image;
   };
 
   // update profile with new data and avatar if changed on db
@@ -39,16 +36,8 @@ const EditProfile = () => {
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     e.preventDefault();
-
-    uploadRef.current?.click();
-
-    if (updateUserInput.image.includes("https://"))
-      await UpdateProfile(updateUserInput);
+    await UpdateProfile(updateUserInput);
   };
-
-  const uploadRef = useRef<HTMLButtonElement>(null);
-
-  console.log(updateUserInput);
 
   if (session?.user) {
     return (
