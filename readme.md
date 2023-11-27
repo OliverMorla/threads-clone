@@ -14,8 +14,9 @@ Threads-Clone is a full-stack social media application inspired by the dynamic a
 
 ## Demo
 
-Check out the live demo deployed on Vercel: [Threads-Clone Demo](#)
-https://threads-clone-two-amber.vercel.app/
+Check out the live demo deployed on Vercel: https://threads-clone-two-amber.vercel.app/
+
+![Screenshot (119)](https://github.com/OliverMorla/threads-clone/assets/73266650/e91986c8-7280-431e-909e-937d0b878360)
 
 ## Getting Started
 
