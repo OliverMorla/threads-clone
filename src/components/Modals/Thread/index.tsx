@@ -124,21 +124,6 @@ const CreateThreadModal = ({
             }
             className="bg-transparent appearance-none text-white p-2 outline-none"
           />
-          {/* <Image
-            src={"/assets/icons/image.svg"}
-            width={20}
-            height={20}
-            alt="image"
-            className="cursor-pointer m-2"
-            onClick={handleFileClick}
-          /> */}
-          {/* <input
-            type="file"
-            name="thread-image"
-            className="hidden"
-            // onChange={handleThreadImage}
-            ref={threadImageRef}
-          /> */}
           <UploadButton
             endpoint={"media"}
             onBeforeUploadBegin={(file) => handleThreadImage(file)}
@@ -363,13 +348,15 @@ const ReplyThreadModal = ({
   });
 
   // handle thread image and sets the image to the threadImage state
-  const handleThreadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setThreadImage(URL.createObjectURL(e.target.files?.item(0) as Blob));
-    setThreadInput({
-      ...threadInput,
-      image: URL.createObjectURL(e.target.files?.item(0) as Blob),
-    });
-    setThreadImageUpload(e.target.files?.item(0));
+  const handleThreadImage = (image: File[]) => {
+    setThreadImage(URL.createObjectURL(image[0]));
+    // setThreadInput({
+    //   ...threadInput,
+    //   image: URL.createObjectURL(e.target.files?.item(0) as Blob),
+    // });
+    setThreadImageUpload(image[0]);
+
+    return image;
   };
 
   // handle thread image click and opens the file explorer
@@ -379,8 +366,7 @@ const ReplyThreadModal = ({
 
   // handle thread creation and dispatches the thread to the redux store
   const handleCreateThread = async () => {
-    const data = await ReplyToThread(threadInput, threadImageUpload);
-    console.log(threadInput);
+    const data = await ReplyToThread(threadInput);
     if (data?.ok) {
       alert(data?.message);
     }
@@ -473,20 +459,49 @@ const ReplyThreadModal = ({
             }
             className="bg-transparent appearance-none text-white p-2 outline-none"
           />
-          <Image
-            src={"/assets/icons/image.svg"}
-            width={20}
-            height={20}
-            alt="image"
-            className="cursor-pointer m-2"
-            onClick={handleFileClick}
-          />
-          <input
-            type="file"
-            name="thread-image"
-            className="hidden"
-            onChange={handleThreadImage}
-            ref={threadImageRef}
+          <UploadButton
+            endpoint={"media"}
+            onBeforeUploadBegin={(file) => handleThreadImage(file)}
+            onUploadBegin={(res) => {
+              console.log(res);
+            }}
+            onClientUploadComplete={(res) =>
+              setThreadInput((prevState) => {
+                return {
+                  ...prevState,
+                  image: res[0].url,
+                };
+              })
+            }
+            config={{
+              mode: "manual",
+            }}
+            appearance={{
+              container: {
+                width: "fit-content",
+                height: "fit-content",
+              },
+              button: {
+                width: "fit-content",
+                height: "fit-content",
+                backgroundColor: "transparent",
+              },
+            }}
+            content={{
+              button(arg) {
+                return (
+                  <Image
+                    src={"/assets/icons/image.svg"}
+                    width={20}
+                    height={20}
+                    alt="image"
+                    className="cursor-pointer m-2"
+                  />
+                );
+              },
+            }}
+            onUploadProgress={(progress) => console.log(progress)}
+            onUploadError={(err) => console.log(err)}
           />
           {threadImage ? (
             <Image
@@ -560,13 +575,15 @@ const StartThreadModal = ({
   });
 
   // handle thread image and sets the image to the threadImage state
-  const handleThreadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setThreadImage(URL.createObjectURL(e.target.files?.item(0) as Blob));
-    setThreadInput({
-      ...threadInput,
-      image: URL.createObjectURL(e.target.files?.item(0) as Blob),
-    });
-    setThreadImageUpload(e.target.files?.item(0));
+  const handleThreadImage = (image: File[]) => {
+    setThreadImage(URL.createObjectURL(image[0]));
+    // setThreadInput({
+    //   ...threadInput,
+    //   image: URL.createObjectURL(e.target.files?.item(0) as Blob),
+    // });
+    setThreadImageUpload(image[0]);
+
+    return image;
   };
 
   // handle thread image click and opens the file explorer
@@ -576,8 +593,7 @@ const StartThreadModal = ({
 
   // handle thread creation and dispatches the thread to the redux store
   const handleCreateThread = async () => {
-    const data = await StartThread(threadInput, threadImageUpload);
-    console.log(threadInput);
+    const data = await StartThread(threadInput);
     if (data?.ok) {
       alert(data?.message);
     }
@@ -670,7 +686,7 @@ const StartThreadModal = ({
             }
             className="bg-transparent appearance-none text-white p-2 outline-none"
           />
-          <Image
+          {/* <Image
             src={"/assets/icons/image.svg"}
             width={20}
             height={20}
@@ -684,6 +700,50 @@ const StartThreadModal = ({
             className="hidden"
             onChange={handleThreadImage}
             ref={threadImageRef}
+          /> */}
+          <UploadButton
+            endpoint={"media"}
+            onBeforeUploadBegin={(file) => handleThreadImage(file)}
+            onUploadBegin={(res) => {
+              console.log(res);
+            }}
+            onClientUploadComplete={(res) =>
+              setThreadInput((prevState) => {
+                return {
+                  ...prevState,
+                  image: res[0].url,
+                };
+              })
+            }
+            config={{
+              mode: "manual",
+            }}
+            appearance={{
+              container: {
+                width: "fit-content",
+                height: "fit-content",
+              },
+              button: {
+                width: "fit-content",
+                height: "fit-content",
+                backgroundColor: "transparent",
+              },
+            }}
+            content={{
+              button(arg) {
+                return (
+                  <Image
+                    src={"/assets/icons/image.svg"}
+                    width={20}
+                    height={20}
+                    alt="image"
+                    className="cursor-pointer m-2"
+                  />
+                );
+              },
+            }}
+            onUploadProgress={(progress) => console.log(progress)}
+            onUploadError={(err) => console.log(err)}
           />
           {threadImage ? (
             <Image

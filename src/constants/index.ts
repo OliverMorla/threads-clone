@@ -54,10 +54,9 @@ const FooterItems = [
 
 const ActivityItems = [
   { name: "All", value: "all", category: "activity" },
-  { name: "Follows", value: "follows", category: "activity" },
+  { name: "Following", value: "following", category: "activity" },
   { name: "Followers", value: "followers", category: "activity" },
   { name: "Replies", value: "replies", category: "activity" },
-  { name: "Requests", value: "requests", category: "activity" },
 ];
 
 export { NavigationItems, FooterItems, ActivityItems };

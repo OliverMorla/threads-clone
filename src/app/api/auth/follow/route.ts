@@ -5,12 +5,13 @@ import { getToken } from "next-auth/jwt";
 import User from "@/lib/models/user.model";
 
 export async function POST(req: NextRequest) {
-  await connectToDatabase();
+  await connectToDatabase()
+    .then((res) => console.log("connected"))
+    .catch((err) => console.log(err));
+
   const session = await getToken({ req, secret: process.env.OAUTH_SECRET });
 
   const { userId, action } = await req.json();
-
-  console.log(userId, action);
 
   if (!userId && action) {
     return NextResponse.json({
@@ -21,8 +22,6 @@ export async function POST(req: NextRequest) {
   }
 
   if (session) {
-    console.log(action, session);
-
     if (action === "follow") {
       try {
         if (session.sub === userId) {
@@ -38,8 +37,6 @@ export async function POST(req: NextRequest) {
           "following.users": userId,
         });
 
-        console.log("does follow exist", doesFollowExist);
-
         if (doesFollowExist) {
           return NextResponse.json({
             status: 400,
@@ -48,8 +45,6 @@ export async function POST(req: NextRequest) {
           });
         }
 
-        console.log("does follow exist", doesFollowExist);
-
         // add follow count to original user
         const addFollowingToUser = await User.findByIdAndUpdate(
           {
@@ -57,13 +52,13 @@ export async function POST(req: NextRequest) {
           },
           {
             $push: {
-              following: userId,
+              following: {
+                _id: userId,
+                followedDate: new Date().toISOString(),
+              },
             },
-            
           }
         );
-
-        console.log("add following to user", addFollowingToUser);
 
         // add follow count to second user
         const addFollowerToUser2 = await User.findByIdAndUpdate(
@@ -72,7 +67,10 @@ export async function POST(req: NextRequest) {
           },
           {
             $push: {
-              followers: session.sub,
+              followers: {
+                _id: session.sub,
+                followedDate: new Date().toISOString(),
+              },
             },
           }
         );
@@ -107,8 +105,6 @@ export async function POST(req: NextRequest) {
           "following.users": userId,
         });
 
-        console.log("does follow exist", doesFollowExist);
-
         if (doesFollowExist) {
           return NextResponse.json({
             status: 400,
@@ -128,8 +124,6 @@ export async function POST(req: NextRequest) {
             },
           }
         );
-
-        console.log("remove following to user", removeFollowingToUser);
 
         // remove follow count to second user
         const removeFollowerToUser2 = await User.findByIdAndUpdate(

@@ -31,19 +31,16 @@ const userSchema = new mongoose.Schema({
   ],
   followers: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      followedDate: { type: String, default: Date.now }
+      _id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      followedDate: { type: String, default: Date.now },
     },
   ],
   following: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      followedDate: { type: String, default: Date.now }
+      _id: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      followedDate: { type: String, default: Date.now },
     },
   ],
-
   bookmarks: [
     {
       type: mongoose.Schema.Types.ObjectId,

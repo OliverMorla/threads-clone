@@ -10,6 +10,7 @@ import {
   StartThreadModal,
   ThreadModalOptions,
 } from "@/components/Modals/Thread";
+
 import { LikeThread } from "@/lib/options/thread.options";
 import { addThreadLike } from "@/redux/slices/thread-slice";
 
@@ -25,12 +26,13 @@ const Thread = ({
   threadImage,
   threadId,
 }: ThreadCardProps) => {
-  const [showOptionsModal, setShowOptionsModal] = useState(false);
+  const dispatch = useDispatch();
+
+  const [showOptionsModal, setShowOptionsModal] = useState<boolean>(false);
 
   const { data: session } = useSession();
 
-  const dispatch = useDispatch();
-
+  // handle thread like and dispatches the thread to the redux store
   const handleLikeThread = async () => {
     const data = await LikeThread(threadId);
 
@@ -38,8 +40,6 @@ const Thread = ({
       dispatch(addThreadLike({ threadId, userId, username, userImage }));
     }
   };
-
-  console.log(likes);
 
   return (
     <section>
@@ -169,12 +169,10 @@ const ThreadWithChildren = ({
   threadId,
   childrenThreads,
 }: ThreadCardWithChildrenProps) => {
-  const [showOptionsModal, setShowOptionsModal] = useState(false);
+  const [showOptionsModal, setShowOptionsModal] = useState<boolean>(false);
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
   const [showStartThreadModal, setShowStartThreadModal] =
     useState<boolean>(false);
-
-  console.log(childrenThreads);
 
   return (
     <section className="flex flex-col">
@@ -191,11 +189,6 @@ const ThreadWithChildren = ({
                   className="rounded-full max-w-[35px] max-h-[35px] object-cover border-[--octonary] border-[1px]"
                 />
               </div>
-              {/* {childrenThreads?.length && (
-                <section className="bg-[--octonary] w-[1px] h-full block my-1">
-                  &nbsp;
-                </section>
-              )} */}
               <section className="bg-[--octonary] w-[1px] h-full block my-1">
                 &nbsp;
               </section>
@@ -350,6 +343,7 @@ const ThreadWithChildren = ({
           />
         </motion.section>
       ) : null}
+
       {replies ? (
         <section className="flex flex-col">
           {replies.map((thread) => {
@@ -390,7 +384,7 @@ const ThreadWithReplies = ({
   userId,
   childrenThreads,
 }: ThreadCardWithChildrenProps) => {
-  const [showOptionsModal, setShowOptionsModal] = useState(false);
+  const [showOptionsModal, setShowOptionsModal] = useState<boolean>(false);
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
 
   return (
@@ -484,6 +478,7 @@ const ThreadWithReplies = ({
           <ThreadModalOptions threadId={threadId} userId={userId} />
         )}
       </section>
+
       {childrenThreads ? (
         <section className="flex flex-col">
           {childrenThreads.map((thread) => {
@@ -506,6 +501,7 @@ const ThreadWithReplies = ({
       ) : (
         <h1 className="text-center p-2">No replies</h1>
       )}
+
       {showCreateModal ? (
         <motion.section className="w-full h-full top-0 left-0 absolute flex justify-center items-center">
           <motion.div
@@ -527,6 +523,7 @@ const ThreadWithReplies = ({
           />
         </motion.section>
       ) : null}
+
     </section>
   );
 };

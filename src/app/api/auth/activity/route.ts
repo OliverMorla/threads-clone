@@ -4,19 +4,25 @@ import { getToken } from "next-auth/jwt";
 import User from "@/lib/models/user.model";
 
 export async function GET(req: NextRequest) {
+  await connectToDatabase()
+    .then(() => console.log("connected"))
+    .catch((err) => console.log(err));
+
   const session = await getToken({ req, secret: process.env.OAUTH_SECRET });
 
   if (session) {
-    const activity = await User.findById(session.sub).populate([
-      {
-        path: "followers",
-        select: "username image followedDate",
-      },
-      {
-        path: "following",
-        select: "username image followedDate",
-      },
-    ]);
+    const activity = await User.findById(session.sub)
+      .populate([
+        {
+          path: "followers", // Populate the user reference in followers
+          select: "username image createdAt", // Fields to select from the populated User documents
+        },
+        {
+          path: "following", // Populate the user reference in following
+          select: "username image createdAt", // Fields to select from the populated User documents
+        },
+      ])
+      .select({ password: 0, email: 0, __v: 0, bio: 0, website: 0 });
 
     if (activity) {
       return NextResponse.json({

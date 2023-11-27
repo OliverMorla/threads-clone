@@ -33,8 +33,6 @@ const Home = () => {
 
   const { data: session } = useSession();
 
-  console.log(threads);
-
   return (
     <motion.main
       variants={fadeVariant1}

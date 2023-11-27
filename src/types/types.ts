@@ -10,6 +10,21 @@ interface UserProps {
   _id: string;
   username: string;
   image: string;
+  createdAt?: string
+}
+
+interface UserActivityProps {
+  _id: string;
+  username: string;
+  image: string;
+  createdAt: string
+}
+
+interface ActivtyCardProps {
+  username: string;
+  createdAt?: string;
+  activty: string;
+  userImage: string;
 }
 
 interface Thread {

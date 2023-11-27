@@ -1,22 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
-import Image from "next/image";
 
-import ActivtyCard from "@/components/Cards/ActivtyCards";
+import { fetchActivity } from "@/lib/actions/activity.actions";
 
 import { ActivityItems } from "@/constants";
 
+import ActivtyCard from "@/components/Cards/Activity";
+
 const Activity = () => {
+  const [activity, setActivity] = useState<User>();
+
   // get session data from next-auth
   const { data: session } = useSession();
 
   // if user is not logged in, redirect to login page
-  // if (!session?.user) {
-  //   redirect("/auth/login");
-  // }
+  if (!session?.user) {
+    redirect("/auth/login");
+  }
+
+  useEffect(() => {
+    fetchActivity().then((res) => setActivity(res.data));
+  }, []);
 
   return (
     <main className="h-full w-full flex items-center flex-col gap-4">
@@ -32,16 +39,24 @@ const Activity = () => {
         ))}
       </section>
       <section className="flex flex-col mt-4 max-w-[575px] w-full gap-4">
-        <ActivtyCard
-          username={"oliverm11_"}
-          createdAt={"2d"}
-          activty="started following you"
-        />
-        <ActivtyCard
-          username={"oliverm11_"}
-          createdAt={"2d"}
-          activty="started following you"
-        />
+        {activity?.following.map((item, index) => (
+          <ActivtyCard
+            key={index}
+            username={item.username}
+            userImage={item.image}
+            createdAt={item?.createdAt}
+            activty={"you started following"}
+          />
+        ))}
+        {activity?.followers.map((item, index) => (
+          <ActivtyCard
+            key={index}
+            username={item.username}
+            userImage={item.image}
+            createdAt={item?.createdAt}
+            activty={"started following you"}
+          />
+        ))}
       </section>
     </main>
   );

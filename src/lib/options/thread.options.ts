@@ -1,57 +1,18 @@
 // fetch threads from the server
 async function fetchThreads(limit: string) {
   const res = await fetch("/api/threads");
+  const data = await res.json();
+  return data;
 }
 
-// upload thread image to imgbb and return the url
-// async function UploadThreadImage(
-//   threadInput: ThreadInput,
-//   threadImage: Blob | File | null | undefined | string
-// ) {
-//   if (!threadImage) return;
-
-//   const form = new FormData();
-//   form.append("image", threadImage);
-
-//   try {
-//     const res = await fetch(process.env.NEXT_PUBLIC_IMGBB_URL!, {
-//       method: "POST",
-//       body: form,
-//     });
-
-//     const data = (await res.json()) as ImageUploadResponse;
-
-//     if (data.success) {
-//       const updatedThreadInputWithImage = {
-//         ...threadInput,
-//         image: data.data.url,
-//       };
-//       return updatedThreadInputWithImage;
-//     }
-
-//     return null;
-//   } catch (err) {
-//     alert(err instanceof Error ? err.message : "Unknown error");
-//   }
-// }
-
+// delete thread from the server
 async function DeleteThread(threadId: string) {}
 
+// edit thread from the server
 async function EditThread(threadId: string, text: string) {}
 
-async function CreateThread(
-  threadInput: ThreadInput,
-  // threadImage: Blob | File | null | undefined | string
-) {
-  // let updatedThreadInputWithImage;
-
-  // if (threadImage) {
-  //   updatedThreadInputWithImage = await UploadThreadImage(
-  //     threadInput,
-  //     threadImage
-  //   );
-  // }
-
+// create thread from the server
+async function CreateThread(threadInput: ThreadInput) {
   try {
     const res = await fetch("/api/auth/threads", {
       method: "POST",
@@ -67,23 +28,12 @@ async function CreateThread(
 
     return data;
   } catch (err) {
-    alert(err instanceof Error ? err.message : "Unknown error");
+    alert(err instanceof Error ? err.message : "failed to create thread");
   }
 }
 
-async function ReplyToThread(
-  threadInput: ThreadInput,
-  threadImage: Blob | File | null | undefined | string
-) {
-  // let updatedThreadInputWithImage;
-
-  // if (threadImage) {
-  //   updatedThreadInputWithImage = await UploadThreadImage(
-  //     threadInput,
-  //     threadImage
-  //   );
-  // }
-
+// reply to thread from the server
+async function ReplyToThread(threadInput: ThreadInput) {
   try {
     const res = await fetch("/api/auth/reply", {
       method: "POST",
@@ -103,19 +53,8 @@ async function ReplyToThread(
   }
 }
 
-async function StartThread(
-  threadInput: ReplyInput,
-  threadImage: Blob | File | null | undefined | string
-) {
-  // let updatedThreadInputWithImage;
-
-  // if (threadImage) {
-  //   updatedThreadInputWithImage = await UploadThreadImage(
-  //     threadInput,
-  //     threadImage
-  //   );
-  // }
-
+// start thread from the server
+async function StartThread(threadInput: ReplyInput) {
   try {
     const res = await fetch(
       `/api/auth/threads/${threadInput.originalThreadId}`,
@@ -138,6 +77,7 @@ async function StartThread(
   }
 }
 
+// like thread from the server
 async function LikeThread(threadId: string) {
   try {
     const res = await fetch(`/api/auth/threads/${threadId}/likes`, {
@@ -161,7 +101,6 @@ async function LikeThread(threadId: string) {
 }
 
 export {
-  // UploadThreadImage,
   DeleteThread,
   EditThread,
   CreateThread,
