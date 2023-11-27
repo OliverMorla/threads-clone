@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Threads-Clone
+
+## Introduction
+
+Threads-Clone is a full-stack social media application inspired by the dynamic and interactive nature of modern social networking. Although it's a work in progress, this application leverages the power of the MERN stack with a twist - using Next.js 14 with server actions, along with MongoDB for the database. The frontend is built using React.js, styled with Tailwind CSS, and animated with Framer Motion. For authentication, Next-Auth is used, while Redux manages the application state. The application also features 'uploadthing' for handling file uploads.
+
+## Features
+
+- **User Authentication**: Secure login, registration, and profile editing, including bio, website, follower and following count.
+- **Thread Interactions**: Users can create, delete, update, and bookmark threads. They can also reply to threads and initiate a thread from a parent thread.
+- **User Search and Interaction**: Search for users, follow or unfollow them, view their threads, replies, and likes.
+- **Activity Log**: A personal log for users to track their activities on the platform.
+- **Responsive UI**: Tailored for a seamless experience across various devices.
+
+## Demo
+
+Check out the live demo deployed on Vercel: [Threads-Clone Demo](#)
+https://threads-clone-two-amber.vercel.app/
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Node.js
+- MongoDB
+- Next.js 14
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/threads-clone.git
+   ```
+2. Install the dependencies:
+   ```bash
+   cd threads-clone
+   npm install
+   ```
+3. Set up your environment variables in `.env.local`.
+
+```js
+
+MONGODB_USERNAME=
+MONGODB_PASSWORD=
+MONGODB_URI=
+UPLOADTHING_SECRET=
+UPLOADTHING_APP_ID=
+OAUTH_SECRET=
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Contributing
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-## Learn More
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-To learn more about Next.js, take a look at the following resources:
+## License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Distributed under the MIT License. See `LICENSE` for more information.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Contact
 
-## Deploy on Vercel
+Your Name - [@Oliver1129](#)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Project Link: [https://github.com/OliverMorla/threads-clone](https://github.com/OliverMorla/threads-clone)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+---
+
+Feel free to adapt this template to better fit your project's specific requirements and personality!
