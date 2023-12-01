@@ -10,14 +10,14 @@ interface UserProps {
   _id: string;
   username: string;
   image: string;
-  createdAt?: string
+  createdAt?: string;
 }
 
 interface UserActivityProps {
   _id: string;
   username: string;
   image: string;
-  createdAt: string
+  createdAt: string;
 }
 
 interface ActivtyCardProps {
@@ -55,6 +55,10 @@ interface User {
   following: UserProps[];
   bookmarks: Thread[];
   website: string;
+}
+
+interface UserPayloadProps {
+  user: User;
 }
 
 interface ThreadCardProps {
@@ -153,3 +157,35 @@ interface ImageUploadResponse {
 interface UserResponse extends ApiResponse<User> {}
 interface ThreadResponse extends ApiResponse<Thread> {}
 interface ThreadsReponse extends ApiResponse<Thread[]> {}
+
+
+interface UserInitialProps {
+  currentUser: SingleUserInitialProps;
+  targetUser: SingleUserInitialProps;
+}
+
+interface UserInitialFollowProps {
+  _id: {
+    _id: string;
+    username: string;
+    image: string;
+  };
+  followedDate: string;
+}
+
+interface SingleUserInitialProps {
+  _id: string;
+  username: string;
+  name?: string | null;
+  email?: string;
+  password?: string;
+  image?: string | null;
+  bio?: string | null;
+  threads?: Thread[];
+  verified?: boolean;
+  createdAt?: string;
+  followers: UserInitialFollowProps[];
+  following: UserInitialFollowProps[];
+  bookmarks?: Thread[];
+  website?: string;
+}

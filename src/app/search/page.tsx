@@ -1,11 +1,12 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { useState, useEffect, use } from "react";
+import { motion } from "framer-motion";
 import Image from "next/image";
-import { fetchUsers } from "@/lib/actions/search.actions";
 import Link from "next/link";
+
+import { fetchUsers } from "@/lib/actions/search.actions";
 
 const Search = () => {
   const [search, setSearch] = useState<string>("");

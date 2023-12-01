@@ -20,6 +20,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Threads Clone",
   description: "A clone of the threads website",
+  keywords: ["threads", "threads-clone", "social"],
 };
 
 export default function RootLayout({

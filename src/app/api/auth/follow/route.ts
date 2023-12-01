@@ -13,6 +13,8 @@ export async function POST(req: NextRequest) {
 
   const { userId, action } = await req.json();
 
+  console.log(userId, session?.sub, action);
+
   if (!userId && action) {
     return NextResponse.json({
       status: 400,
@@ -32,12 +34,22 @@ export async function POST(req: NextRequest) {
           });
         }
 
-        const doesFollowExist = await User.findOne({
-          _id: session.sub,
-          "following.users": userId,
-        });
+        const doesFollowExist = await User.findOne(
+          {
+            _id: session.sub,
+          },
+          { 
+            following: {
+              $elemMatch: {
+                _id: userId,
+              },
+            },
+          }
+        );
 
-        if (doesFollowExist) {
+        console.log(doesFollowExist.following);
+
+        if (doesFollowExist.following.length > 0) {
           return NextResponse.json({
             status: 400,
             ok: false,
@@ -47,33 +59,33 @@ export async function POST(req: NextRequest) {
 
         // add follow count to original user
         const addFollowingToUser = await User.findByIdAndUpdate(
-          {
-            _id: session.sub,
-          },
+          session.sub, // assuming this is the correct user ID
           {
             $push: {
               following: {
-                _id: userId,
+                _id: userId, // ensure this is a valid user ID
                 followedDate: new Date().toISOString(),
               },
             },
           }
         );
 
+        console.log(addFollowingToUser);
+
         // add follow count to second user
         const addFollowerToUser2 = await User.findByIdAndUpdate(
-          {
-            _id: userId,
-          },
+          userId, // assuming this is the correct user ID
           {
             $push: {
               followers: {
-                _id: session.sub,
+                _id: session.sub, // ensure this is a valid user ID
                 followedDate: new Date().toISOString(),
               },
             },
           }
         );
+
+        console.log(addFollowerToUser2);
 
         if (addFollowingToUser && addFollowerToUser2) {
           return NextResponse.json({
@@ -83,6 +95,7 @@ export async function POST(req: NextRequest) {
           });
         }
       } catch (err) {
+        console.log(err);
         return NextResponse.json({
           status: 500,
           ok: false,
@@ -115,27 +128,28 @@ export async function POST(req: NextRequest) {
 
         // remove follow count to original user
         const removeFollowingToUser = await User.findByIdAndUpdate(
-          {
-            _id: session.sub,
-          },
+          session.sub, // assuming this is the correct user ID
           {
             $pull: {
-              following: userId,
+              following: {
+                _id: userId, // ensure this is a valid user ID
+              },
             },
           }
         );
 
         // remove follow count to second user
         const removeFollowerToUser2 = await User.findByIdAndUpdate(
-          {
-            _id: userId,
-          },
+          userId, // assuming this is the correct user ID
           {
             $pull: {
-              followers: session.sub,
+              followers: {
+                _id: session.sub, // ensure this is a valid user ID
+              },
             },
           }
         );
+
         if (removeFollowingToUser && removeFollowerToUser2) {
           return NextResponse.json({
             status: 200,

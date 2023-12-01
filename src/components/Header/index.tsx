@@ -10,6 +10,7 @@ import { signOut } from "next-auth/react";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import Notification from "../Modals/Notification";
 
 const Header = () => {
   const pathname = usePathname();

@@ -8,6 +8,7 @@ import useFetch from "@/hooks/useFetch";
 import { Thread } from "@/components/Cards/Thread";
 import { LoadingWithoutBg } from "@/components/Loading";
 import { fadeVariant1 } from "@/config/framer-animations";
+import Notification from "@/components/Modals/Notification";
 
 const Home = () => {
   // get threads from api then store in redux store
