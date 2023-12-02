@@ -3,7 +3,7 @@
 
 import { useEffect, useState, Fragment } from "react";
 import { useSession } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import Image from "next/image";
 import Link from "next/link";
@@ -26,6 +26,8 @@ const Profile = ({
   params: { username: string };
 }) => {
   const dispatch = useDispatch();
+
+  const pathname = usePathname();
 
   // remove %40 from username
   const usernameWithoutAt = username.split("%40")[1];
@@ -96,6 +98,8 @@ const Profile = ({
     handleGetUserSession();
   }, [session?.user]);
 
+  if (!pathname.includes("@")) return null;
+
   const handleFollow = async (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!user) return;
 
@@ -158,8 +162,6 @@ const Profile = ({
   const doesCurrentUserMatch = usernameWithoutAt === session?.user.username;
   // @ts-ignore // check if current user matches the username in the url
   const doesCurrentUserDoesNotMatch = usernameWithoutAt !== session?.user.username;
-
-  console.log(doesCurrentUserDoesNotMatch);
 
   return (
     <main className="h-auto w-full flex justify-start flex-col items-center max-w-[500px] mx-auto">

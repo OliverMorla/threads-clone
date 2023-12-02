@@ -1,12 +1,13 @@
 "use client";
 
 import Conversation from "@/components/Cards/Conversation";
+import SingleChatModal from "@/components/Modals/SingleChat";
 import User from "@/lib/models/user.model";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 
-const Chat = () => {
+const SingleChat = ({ params: { userId } }: ChatProps) => {
   const { data: session } = useSession();
 
   // if user is not logged in, redirect to login page
@@ -14,10 +15,16 @@ const Chat = () => {
     redirect("/auth/login");
   }
 
+  const messages = [
+    {
+      chatId: "1",
+    },
+  ];
+
   return (
-    <main className="h-screen w-full flex m-2">
-      <section className="max-w-[350px] w-full">
-        <section className="flex justify-between p-4">
+    <main className="h-screen w-full flex">
+      <section className="max-w-[350px] w-full border-r-[1px] border-[--octonary]">
+        <section className="flex justify-between p-4 border-b-[1px] border-[--octonary]">
           <p className="font-bold">johnDoe</p>
           <Image
             src={"/assets/icons/create-chat.svg"}
@@ -78,9 +85,18 @@ const Chat = () => {
           />
         </section>
       </section>
-      <section></section>
+      <section className="w-full">
+        {userId && (
+          <SingleChatModal
+            userId={userId}
+            username={"johnDoe"}
+            messages={messages}
+            userImage=""
+          />
+        )}
+      </section>
     </main>
   );
 };
 
-export default Chat;
+export default SingleChat;

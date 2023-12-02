@@ -118,7 +118,9 @@ export async function POST(req: NextRequest) {
           "following.users": userId,
         });
 
-        if (doesFollowExist) {
+        console.log(doesFollowExist)
+
+        if (!doesFollowExist) {
           return NextResponse.json({
             status: 400,
             ok: false,

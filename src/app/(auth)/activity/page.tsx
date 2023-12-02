@@ -11,7 +11,7 @@ import { ActivityItems } from "@/constants";
 import ActivtyCard from "@/components/Cards/Activity";
 
 const Activity = () => {
-  const [activity, setActivity] = useState<User>();
+  const [activity, setActivity] = useState<UserActivityProps>();
 
   // get session data from next-auth
   const { data: session } = useSession();
@@ -39,21 +39,21 @@ const Activity = () => {
         ))}
       </section>
       <section className="flex flex-col mt-4 max-w-[575px] w-full gap-4">
-        {activity?.following.map((item, index) => (
+        {activity?.following.map((following, index) => (
           <ActivtyCard
             key={index}
-            username={item.username}
-            userImage={item.image}
-            createdAt={item?.createdAt}
+            username={following._id.username}
+            userImage={following._id.image}
+            createdAt={following.followedDate}
             activty={"you started following"}
           />
         ))}
-        {activity?.followers.map((item, index) => (
+        {activity?.followers.map((follower, index) => (
           <ActivtyCard
             key={index}
-            username={item.username}
-            userImage={item.image}
-            createdAt={item?.createdAt}
+            username={follower._id.username}
+            userImage={follower._id.image}
+            createdAt={follower.followedDate}
             activty={"started following you"}
           />
         ))}

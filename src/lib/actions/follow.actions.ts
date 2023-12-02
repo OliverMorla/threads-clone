@@ -10,6 +10,8 @@ async function addFollowToUser(userId: string, action: string) {
 
     const data = await res.json();
 
+    console.log(data)
+
     if (!data.ok) throw new Error(data.message);
 
     return data;

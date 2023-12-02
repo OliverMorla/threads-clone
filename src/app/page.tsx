@@ -1,14 +1,18 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
 import Image from "next/image";
+
 import useFetch from "@/hooks/useFetch";
+
 import { Thread } from "@/components/Cards/Thread";
 import { LoadingWithoutBg } from "@/components/Loading";
-import { fadeVariant1 } from "@/config/framer-animations";
 import Notification from "@/components/Modals/Notification";
+
+import { fadeVariant1 } from "@/config/framer-animations";
 
 const Home = () => {
   // get threads from api then store in redux store

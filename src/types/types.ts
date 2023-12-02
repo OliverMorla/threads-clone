@@ -13,10 +13,14 @@ interface UserProps {
   createdAt?: string;
 }
 
+
+
 interface UserActivityProps {
   _id: string;
   username: string;
   image: string;
+  followers: UserFollowProps[];
+  following: UserFollowProps[];
   createdAt: string;
 }
 
@@ -158,7 +162,6 @@ interface UserResponse extends ApiResponse<User> {}
 interface ThreadResponse extends ApiResponse<Thread> {}
 interface ThreadsReponse extends ApiResponse<Thread[]> {}
 
-
 interface UserInitialProps {
   currentUser: SingleUserInitialProps;
   targetUser: SingleUserInitialProps;
@@ -172,6 +175,10 @@ interface UserInitialFollowProps {
   };
   followedDate: string;
 }
+
+interface UserFollowProps extends UserInitialFollowProps {}
+
+
 
 interface SingleUserInitialProps {
   _id: string;
@@ -189,3 +196,29 @@ interface SingleUserInitialProps {
   bookmarks?: Thread[];
   website?: string;
 }
+
+interface ConversationProps {
+  username: string;
+  userImage: string;
+  lastMessageTimestamp: string;
+  lastMessage: string;
+  isRead: boolean;
+  userId: string;
+}
+
+interface ChatProps {
+  params: {
+    userId: string;
+  };
+}
+
+interface messages {
+  chatId: string
+}
+interface SingleChatModalProps {
+  userId: string;
+  username: string;
+  userImage: string;
+  messages: messages[]
+}
+

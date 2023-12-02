@@ -14,12 +14,12 @@ export async function GET(req: NextRequest) {
     const activity = await User.findById(session.sub)
       .populate([
         {
-          path: "followers", // Populate the user reference in followers
-          select: "username image createdAt", // Fields to select from the populated User documents
+          path: "followers._id",
+          select: "username image",// Fields to select from the populated User documents
         },
         {
-          path: "following", // Populate the user reference in following
-          select: "username image createdAt", // Fields to select from the populated User documents
+          path: "following._id", // Populate the user reference in following
+          select: "username image", // Fields to select from the populated User documents
         },
       ])
       .select({ password: 0, email: 0, __v: 0, bio: 0, website: 0 });

@@ -18,6 +18,7 @@ import {
 } from "@/lib/options/thread.options";
 
 import { UploadButton } from "@/utils/uploadthing";
+import Notification from "../Notification";
 
 const CreateThreadModal = ({
   showCreateModal,
@@ -206,6 +207,12 @@ const CreateThreadModal = ({
 
 // thread modal options
 const ThreadModalOptions = ({ userId, threadId }: ThreadModalOptionsProps) => {
+  const [notification, setNotification] = useState({
+    message: "",
+    type: "",
+    seconds: 0,
+  });
+
   const handleThreads = async (e: React.MouseEvent<HTMLButtonElement>) => {
     switch (e.currentTarget.name) {
       case "delete":
