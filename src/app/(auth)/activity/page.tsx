@@ -16,11 +16,6 @@ const Activity = () => {
   // get session data from next-auth
   const { data: session } = useSession();
 
-  // if user is not logged in, redirect to login page
-  if (!session?.user) {
-    redirect("/auth/login");
-  }
-
   useEffect(() => {
     fetchActivity().then((res) => setActivity(res.data));
   }, []);

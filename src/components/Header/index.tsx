@@ -1,16 +1,16 @@
 "use client";
 
-import { NavigationItems } from "@/constants";
-import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { CreateThreadModal } from "../Modals/Thread";
+import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import Notification from "../Modals/Notification";
+
+import { CreateThreadModal } from "../Modals/Thread";
+
+import { NavigationLinks } from "@/constants";
 
 const Header = () => {
   const pathname = usePathname();
@@ -22,8 +22,6 @@ const Header = () => {
 
   if (pathname.startsWith("/auth") && !pathname.includes("edit-profile"))
     return null;
-
-  // if (!session?.user) return redirect("/auth/login");
 
   return (
     <>
@@ -39,7 +37,7 @@ const Header = () => {
         </Link>
         <nav>
           <ul className="list-none flex flex-row justify-center ">
-            {NavigationItems.map((item, index) => {
+            {NavigationLinks.map((item, index) => {
               if (item.name === "create") {
                 return (
                   <li

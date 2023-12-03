@@ -13,8 +13,6 @@ interface UserProps {
   createdAt?: string;
 }
 
-
-
 interface UserActivityProps {
   _id: string;
   username: string;
@@ -177,8 +175,6 @@ interface UserInitialFollowProps {
 }
 
 interface UserFollowProps extends UserInitialFollowProps {}
-
-
 
 interface SingleUserInitialProps {
   _id: string;

@@ -33,7 +33,7 @@ const Post = ({ params: { threadId } }: { params: { threadId: string } }) => {
       likes: [],
       replies: [
         {
-          _id: "655e51s4702c6dbda9e685680",
+          _id: "655e51s4702c6dbda9e685680", 
           text: "This is a Reply🍊",
           likes: [],
           replies: [],

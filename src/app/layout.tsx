@@ -6,9 +6,11 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
 import AuthProvider from "@/providers/auth-providers";
-import ThreadProvider from "@/providers/thread-provider";
+import ReduxProvider from "@/providers/redux-provider";
+import SocketProvider from "@/providers/socket-providers";
 
 import Loading from "./loading";
+
 import "./globals.css";
 
 const inter = Inter({
@@ -31,13 +33,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
-          <ThreadProvider>
-            <Header />
-            <Suspense fallback={<Loading />}>{children}</Suspense>
-            <Footer />
-          </ThreadProvider>
-        </AuthProvider>
+        <SocketProvider>
+          <AuthProvider>
+            <ReduxProvider>
+              <Header />
+              <Suspense fallback={<Loading />}>{children}</Suspense>
+              <Footer />
+            </ReduxProvider>
+          </AuthProvider>
+        </SocketProvider>
       </body>
     </html>
   );

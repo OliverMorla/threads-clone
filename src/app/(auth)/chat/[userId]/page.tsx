@@ -10,11 +10,6 @@ import { redirect } from "next/navigation";
 const SingleChat = ({ params: { userId } }: ChatProps) => {
   const { data: session } = useSession();
 
-  // if user is not logged in, redirect to login page
-  if (!session?.user) {
-    redirect("/auth/login");
-  }
-
   const messages = [
     {
       chatId: "1",

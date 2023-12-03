@@ -10,11 +10,13 @@ import useFetch from "@/hooks/useFetch";
 
 import { Thread } from "@/components/Cards/Thread";
 import { LoadingWithoutBg } from "@/components/Loading";
-import Notification from "@/components/Modals/Notification";
 
 import { fadeVariant1 } from "@/config/framer-animations";
 
 const Home = () => {
+  // get session from next auth
+  const { data: session } = useSession();
+
   // get threads from api then store in redux store
   const {
     data,
@@ -35,8 +37,6 @@ const Home = () => {
   const threads: Thread[] = useSelector(
     (state: any) => state.threadReducer.threads
   );
-
-  const { data: session } = useSession();
 
   return (
     <motion.main

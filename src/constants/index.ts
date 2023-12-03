@@ -1,31 +1,38 @@
-const NavigationItems = [
+const NavigationLinks = [
   {
     name: "home",
     path: "/",
+    imageUrl: "/assets/icon/home.svg",
   },
   {
     name: "search",
     path: "/search",
+    imageUrl: "/assets/icon/search.svg",
   },
   {
     name: "create",
     path: "/create",
+    imageUrl: "/assets/icon/create.svg",
   },
   {
     name: "activity",
     path: "/activity",
+    imageUrl: "/assets/icon/activity.svg",
   },
   {
     name: "chat",
     path: "/chat",
+    imageUrl: "/assets/icon/chat.svg",
   },
   {
     name: "user",
     path: "/user",
+    imageUrl: "/assets/icon/user.svg",
   },
   {
     name: "bookmarks",
     path: "/bookmarks",
+    imageUrl: "/assets/icon/bookmarks.svg",
   },
 ];
 
@@ -59,4 +66,4 @@ const ActivityItems = [
   { name: "Replies", value: "replies", category: "activity" },
 ];
 
-export { NavigationItems, FooterItems, ActivityItems };
+export { NavigationLinks, FooterItems, ActivityItems };
