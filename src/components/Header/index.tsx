@@ -11,6 +11,7 @@ import Link from "next/link";
 import { CreateThreadModal } from "../Modals/Thread";
 
 import { NavigationLinks } from "@/constants";
+import { useSocket } from "@/providers/socket-provider";
 
 const Header = () => {
   const pathname = usePathname();
@@ -19,6 +20,8 @@ const Header = () => {
 
   const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
   const [showMenuModal, setShowMenuModal] = useState<boolean>(false);
+
+  const { isConnected } = useSocket();
 
   if (pathname.startsWith("/auth") && !pathname.includes("edit-profile"))
     return null;
@@ -101,14 +104,26 @@ const Header = () => {
             })}
           </ul>
         </nav>
-        <Image
-          src={"/assets/icons/menu.svg"}
-          alt="Menu"
-          width={30}
-          height={30}
-          className="cursor-pointer hover:opacity-50 transition-all max-h-[35px]"
-          onClick={() => setShowMenuModal(!showMenuModal)}
-        />
+        <section className="flex items-center gap-2">
+          <section className="text-xs border-slate-300 border-[1px] p-1">
+            <p>Live Updates</p>
+            <div className="text-center">
+              {isConnected ? (
+                <span className="text-green-500">●</span>
+              ) : (
+                <span className="text-red-500">●</span>
+              )}
+            </div>
+          </section>
+          <Image
+            src={"/assets/icons/menu.svg"}
+            alt="Menu"
+            width={30}
+            height={30}
+            className="cursor-pointer hover:opacity-50 transition-all max-h-[35px]"
+            onClick={() => setShowMenuModal(!showMenuModal)}
+          />
+        </section>
       </header>
       {showCreateModal ? (
         <motion.section className="w-full h-full absolute flex justify-center items-center z-20">
@@ -209,4 +224,89 @@ const HeaderOptions = () => {
   );
 };
 
-export default Header;
+const HeaderSideBar = () => {
+  const pathname = usePathname();
+
+  const { data: session } = useSession();
+
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+  const [showMenuModal, setShowMenuModal] = useState<boolean>(false);
+
+  const { isConnected } = useSocket();
+
+  if (pathname.startsWith("/auth") && !pathname.includes("edit-profile"))
+    return null;
+
+  return (
+    <aside>
+      <nav className="sm:hidden">
+        <ul className="list-none flex flex-col justify-center">
+          {NavigationLinks.map((item, index) => {
+            if (item.name === "create") {
+              return (
+                <li
+                  key={index}
+                  className="p-4 cursor-pointer hover:opacity-50 hover: transition-all"
+                  onClick={() => {
+                    session?.user
+                      ? setShowCreateModal(!showCreateModal)
+                      : window.location.replace("/auth/login");
+                  }}
+                >
+                  <Image
+                    src={`/assets/icons/${item.name}.svg`}
+                    alt="Home"
+                    width={30}
+                    height={30}
+                    className="min-w-[20px] min-h-[20px]"
+                  />
+                </li>
+              );
+            } else if (item.name === "user") {
+              return (
+                <Link
+                  href={
+                    session?.user
+                      ? // @ts-ignore
+                        `/@${session.user.username}`
+                      : `/auth/login`
+                  }
+                  key={index}
+                >
+                  <li className="p-4 cursor-pointer hover:opacity-50 hover: transition-all">
+                    <Image
+                      src={`/assets/icons/${item.name}.svg`}
+                      alt="Home"
+                      width={30}
+                      height={30}
+                      className="min-w-[20px] min-h-[20px]"
+                    />
+                  </li>
+                </Link>
+              );
+            } else {
+              return (
+                <Link
+                  href={session?.user ? item.path : "/auth/login"}
+                  key={index}
+                >
+                  <li className="p-4 cursor-pointer hover:opacity-50 hover: transition-all">
+                    <Image
+                      src={`/assets/icons/${item.name}.svg`}
+                      alt="Home"
+                      width={30}
+                      height={30}
+                      className="min-w-[20px] min-h-[20px]"
+                    />
+                  </li>
+                </Link>
+              );
+            }
+          })}
+        </ul>
+      </nav>
+    </aside>
+  );
+};
+
+export { Header, HeaderSideBar };

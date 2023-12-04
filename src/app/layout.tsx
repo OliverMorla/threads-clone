@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import { Inter } from "next/font/google";
 
 import Footer from "@/components/Footer";
-import Header from "@/components/Header";
+import {Header, HeaderSideBar} from "@/components/Header";
 
 import AuthProvider from "@/providers/auth-provider";
 import ReduxProvider from "@/providers/redux-provider";
@@ -39,7 +39,10 @@ export default function RootLayout({
             <NotificationProvider>
               <ReduxProvider>
                 <Header />
-                <Suspense fallback={<Loading />}>{children}</Suspense>
+                <div className="flex">
+                  <HeaderSideBar />
+                  <Suspense fallback={<Loading />}>{children}</Suspense>
+                </div>
                 <Footer />
               </ReduxProvider>
             </NotificationProvider>
