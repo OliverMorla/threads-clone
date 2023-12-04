@@ -41,7 +41,7 @@ async function UpdateProfile(updateUserInput: UpdateUserInput) {
     });
     const data = await res.json();
     if (!data.ok) throw new Error(data.message);
-    return alert(data.message);
+    return data;
   } catch (err) {
     alert(err instanceof Error ? err.message : "Unknown error");
   }

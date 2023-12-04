@@ -3,12 +3,21 @@
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import Image from "next/image";
+
 import { UploadButton } from "@/utils/uploadthing";
+
 import { UpdateProfile } from "@/lib/options/user.options";
+
+import Notification from "@/components/Modals/Notification";
+
+import { useNotification } from "@/providers/notification-provider";
 
 const EditProfile = () => {
   // get session data from next-auth
   const { data: session } = useSession();
+
+  // get notification state from notification provider
+  const { notification, setNotification } = useNotification();
 
   // set up state for user input to update profile
   const [updateUserInput, setUpdateUserInput] = useState<UpdateUserInput>({
@@ -36,12 +45,27 @@ const EditProfile = () => {
     e: React.MouseEvent<HTMLButtonElement>
   ) => {
     e.preventDefault();
-    await UpdateProfile(updateUserInput);
+    const data = await UpdateProfile(updateUserInput);
+
+    if (data.ok) {
+      setNotification({
+        message: data.message,
+        type: "success",
+        seconds: 5,
+      });
+    }
   };
 
   if (session?.user) {
     return (
       <main className="h-full w-full flex flex-col justify-center items-center">
+        {notification.message.length > 0 && (
+          <Notification
+            message={notification.message}
+            type={notification.type}
+            seconds={notification.seconds}
+          />
+        )}
         <h1 className="font-bold text-2xl">Edit Profile</h1>
         <form className="flex flex-col max-w-[575px] w-full items-center mx-auto gap-4 p-2">
           <section className="flex flex-col items-center">

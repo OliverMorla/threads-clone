@@ -19,7 +19,7 @@ import {
   assignCurrentUser,
   assignTargetUser,
 } from "@/redux/slices/user-slice";
-
+ 
 const Profile = ({
   params: { username },
 }: {

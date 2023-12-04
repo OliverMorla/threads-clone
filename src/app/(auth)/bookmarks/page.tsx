@@ -7,8 +7,6 @@ import { Thread } from "@/components/Cards/Thread";
 import { LoadingWithoutBg } from "@/components/Loading";
 
 const Bookmarks = () => {
-  const { data: session } = useSession();
-
   const {
     data: threads,
     loading,

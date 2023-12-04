@@ -1,11 +1,10 @@
 "use client";
 
+import Image from "next/image";
+import { useSession } from "next-auth/react";
+
 import Conversation from "@/components/Cards/Conversation";
 import SingleChatModal from "@/components/Modals/SingleChat";
-import User from "@/lib/models/user.model";
-import { useSession } from "next-auth/react";
-import Image from "next/image";
-import { redirect } from "next/navigation";
 
 const SingleChat = ({ params: { userId } }: ChatProps) => {
   const { data: session } = useSession();

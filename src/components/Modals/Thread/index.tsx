@@ -15,10 +15,17 @@ import {
   ReplyToThread,
   CreateThread,
   StartThread,
+  DeleteThread,
 } from "@/lib/options/thread.options";
 
 import { UploadButton } from "@/utils/uploadthing";
 import Notification from "../Notification";
+import { useNotification } from "@/providers/notification-provider";
+import {
+  addToBookmark,
+  getBookmarks,
+  removeFromBookmark,
+} from "@/lib/actions/bookmark.actions";
 
 const CreateThreadModal = ({
   showCreateModal,
@@ -28,6 +35,8 @@ const CreateThreadModal = ({
   setShowCreateModal: React.Dispatch<SetStateAction<boolean>>;
 }) => {
   const { data: session, status } = useSession();
+
+  const { setNotification } = useNotification();
 
   const dispatch = useDispatch();
 
@@ -78,7 +87,14 @@ const CreateThreadModal = ({
           },
         })
       );
-      alert(data?.message);
+
+      setShowCreateModal(false);
+
+      setNotification({
+        message: data?.message,
+        type: "success",
+        seconds: 5,
+      });
     }
   };
 
@@ -207,56 +223,49 @@ const CreateThreadModal = ({
 
 // thread modal options
 const ThreadModalOptions = ({ userId, threadId }: ThreadModalOptionsProps) => {
-  const [notification, setNotification] = useState({
-    message: "",
-    type: "",
-    seconds: 0,
-  });
+  const dispatch = useDispatch();
+
+  const { setNotification } = useNotification();
 
   const handleThreads = async (e: React.MouseEvent<HTMLButtonElement>) => {
     switch (e.currentTarget.name) {
       case "delete":
-        try {
-          const res = await fetch("/api/auth/threads", {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ threadId }),
+        const deleteThreadData = await DeleteThread(threadId);
+
+        if (deleteThreadData.ok) {
+          setNotification({
+            message: deleteThreadData.message,
+            type: "success",
+            seconds: 5,
           });
 
-          const data = await res.json();
-          console.log(data);
-          if (data.ok) {
-            alert(data.message);
-            dispatch(deleteThread({ threadId }));
-          }
-          throw new Error(data.message);
-        } catch (err) {
-          if (err instanceof Error) alert(err.message);
+          dispatch(deleteThread({ threadId }));
         }
         break;
 
       case "edit":
         break;
 
-      case "bookmark":
-        try {
-          const res = await fetch("/api/auth/bookmarks", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ threadId }),
-          });
-          const data = await res.json();
+      case "bookmark-add":
+        const bookmarkAddData = await addToBookmark(threadId);
 
-          if (data.ok) {
-            return alert(data.message);
-          }
-          throw new Error(data.message);
-        } catch (err) {
-          if (err instanceof Error) alert(err.message);
+        if (bookmarkAddData?.ok) {
+          setNotification({
+            message: bookmarkAddData?.message,
+            type: "success",
+            seconds: 5,
+          });
+        }
+        break;
+      case "bookmark-remove":
+        const bookmarkRemoveData = await removeFromBookmark(threadId);
+
+        if (bookmarkRemoveData.ok) {
+          setNotification({
+            message: bookmarkRemoveData.message,
+            type: "success",
+            seconds: 5,
+          });
         }
         break;
       default:
@@ -265,7 +274,7 @@ const ThreadModalOptions = ({ userId, threadId }: ThreadModalOptionsProps) => {
   };
 
   const { data: session, status } = useSession();
-  const dispatch = useDispatch();
+
 
   return (
     <motion.div
@@ -301,7 +310,7 @@ const ThreadModalOptions = ({ userId, threadId }: ThreadModalOptionsProps) => {
           // @ts-ignore
           session?.user ? (
             <li className="hover:bg-[--primary-hover] transition-colors">
-              <button className="p-2" name="bookmark" onClick={handleThreads}>
+              <button className="p-2" name="bookmark-add" onClick={handleThreads}>
                 Bookmark
               </button>
             </li>
@@ -342,6 +351,8 @@ const ReplyThreadModal = ({
 
   const dispatch = useDispatch();
 
+  const { setNotification } = useNotification();
+
   const threadImageRef = useRef<HTMLInputElement>(null);
 
   const [threadImage, setThreadImage] = useState<any>(null);
@@ -375,7 +386,11 @@ const ReplyThreadModal = ({
   const handleCreateThread = async () => {
     const data = await ReplyToThread(threadInput);
     if (data?.ok) {
-      alert(data?.message);
+      setNotification({
+        message: data?.message,
+        type: "success",
+        seconds: 5,
+      });
     }
   };
 
@@ -569,6 +584,8 @@ const StartThreadModal = ({
 
   const dispatch = useDispatch();
 
+  const { setNotification } = useNotification();
+
   const threadImageRef = useRef<HTMLInputElement>(null);
 
   const [threadImage, setThreadImage] = useState<any>(null);
@@ -602,7 +619,11 @@ const StartThreadModal = ({
   const handleCreateThread = async () => {
     const data = await StartThread(threadInput);
     if (data?.ok) {
-      alert(data?.message);
+      setNotification({
+        message: data?.message,
+        type: "success",
+        seconds: 5,
+      });
     }
   };
 

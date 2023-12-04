@@ -11,11 +11,16 @@ import useFetch from "@/hooks/useFetch";
 import { Thread } from "@/components/Cards/Thread";
 import { LoadingWithoutBg } from "@/components/Loading";
 
+import { useNotification } from "@/providers/notification-provider";
+
 import { fadeVariant1 } from "@/config/framer-animations";
+import Notification from "@/components/Modals/Notification";
 
 const Home = () => {
   // get session from next auth
   const { data: session } = useSession();
+
+  const { notification } = useNotification();
 
   // get threads from api then store in redux store
   const {
@@ -45,6 +50,13 @@ const Home = () => {
       animate="animate"
       className="h-auto w-full flex justify-center items-center max-w-[1230px] mx-auto flex-col"
     >
+      {notification.message.length > 0 && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          seconds={notification.seconds}
+        />
+      )}
       <section className="flex items-center gap-2 relative justify-between w-full max-w-[575px] m-2 p-2">
         <section className="rounded-full bg-[--septenary] h-fit w-fit">
           <Image

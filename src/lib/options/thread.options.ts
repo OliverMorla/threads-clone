@@ -6,7 +6,27 @@ async function fetchThreads(limit: string) {
 }
 
 // delete thread from the server
-async function DeleteThread(threadId: string) {}
+async function DeleteThread(threadId: string) {
+  try {
+    const res = await fetch("/api/auth/threads", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ threadId }),
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) throw new Error(data.message);
+
+    return data;
+  } catch (err) {
+    if (err instanceof Error) {
+      return err.message;
+    }
+  }
+}
 
 // edit thread from the server
 async function EditThread(threadId: string, text: string) {}

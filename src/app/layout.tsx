@@ -5,9 +5,10 @@ import { Inter } from "next/font/google";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
-import AuthProvider from "@/providers/auth-providers";
+import AuthProvider from "@/providers/auth-provider";
 import ReduxProvider from "@/providers/redux-provider";
-import SocketProvider from "@/providers/socket-providers";
+import SocketProvider from "@/providers/socket-provider";
+import NotificationProvider from "@/providers/notification-provider";
 
 import Loading from "./loading";
 
@@ -35,11 +36,13 @@ export default function RootLayout({
       <body className={inter.className}>
         <SocketProvider>
           <AuthProvider>
-            <ReduxProvider>
-              <Header />
-              <Suspense fallback={<Loading />}>{children}</Suspense>
-              <Footer />
-            </ReduxProvider>
+            <NotificationProvider>
+              <ReduxProvider>
+                <Header />
+                <Suspense fallback={<Loading />}>{children}</Suspense>
+                <Footer />
+              </ReduxProvider>
+            </NotificationProvider>
           </AuthProvider>
         </SocketProvider>
       </body>

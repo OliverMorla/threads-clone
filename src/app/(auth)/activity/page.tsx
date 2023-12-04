@@ -1,27 +1,29 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
 
 import { fetchActivity } from "@/lib/actions/activity.actions";
 
 import { ActivityItems } from "@/constants";
 
+import Notification from "@/components/Modals/Notification";
 import ActivtyCard from "@/components/Cards/Activity";
 
 const Activity = () => {
   const [activity, setActivity] = useState<UserActivityProps>();
-
-  // get session data from next-auth
-  const { data: session } = useSession();
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
-    fetchActivity().then((res) => setActivity(res.data));
+    fetchActivity()
+      .then((res) => setActivity(res.data))
+      .catch((err) => setError(err.message));
   }, []);
 
   return (
     <main className="h-full w-full flex items-center flex-col gap-4">
+      {error.length > 0 && (
+        <Notification message={error} type="error" seconds={5} />
+      )}
       <section className="relative flex gap-2">
         {ActivityItems.map((item, index) => (
           <input
