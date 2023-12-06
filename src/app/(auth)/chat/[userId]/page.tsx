@@ -12,7 +12,7 @@ const SingleChat = ({ params: { userId } }: ChatProps) => {
   const { data: session } = useSession();
   const [activeChats, setActiveChats] = useState<Chats[]>([]);
   const { notification, setNotification } = useNotification();
-
+  
   useEffect(() => {
     const fetchChats = async () => {
       const data = await getChats();
