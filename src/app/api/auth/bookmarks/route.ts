@@ -56,6 +56,20 @@ export async function POST(req: NextRequest) {
 
   if (user) {
     try {
+      const doesItExist = await User.findOne({
+        bookmarks: {
+          $in: [threadId],
+        },
+      });
+
+      if (doesItExist) {
+        return NextResponse.json({
+          status: 404,
+          ok: false,
+          message: "Thread is already bookmarked",
+        });
+      }
+
       const bookmark = await User.findOneAndUpdate(
         {
           _id: user.sub,
@@ -91,6 +105,16 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
+  const session = await getToken({ req, secret: process.env.OAUTH_SECRET });
+
+  if (!session) {
+    return NextResponse.json({
+      status: 401,
+      ok: false,
+      message: "You are not authenticated",
+    });
+  }
+
   await connectToDatabase().catch((err) => {
     console.log(err);
   });
@@ -112,17 +136,33 @@ export async function DELETE(req: NextRequest) {
       },
     });
 
-    console.log(doesItExist);
-
-    if (doesItExist) {
+    if (!doesItExist) {
       return NextResponse.json({
         status: 404,
         ok: false,
-        message: "Thread is already",
+        message: "Thread is not bookmarked",
+      });
+    }
+
+    const bookmark = await User.findOneAndUpdate(
+      {
+        _id: session.sub,
+      },
+      {
+        $pull: {
+          bookmarks: threadId,
+        },
+      }
+    );
+
+    if (bookmark) {
+      return NextResponse.json({
+        status: 200,
+        ok: true,
+        message: "Thread unbookmarked successfully",
       });
     }
   } catch (err) {
-    console.log(err);
     return NextResponse.json({
       status: 500,
       ok: false,

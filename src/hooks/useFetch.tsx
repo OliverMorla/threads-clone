@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { setThreads } from "@/redux/slices/thread-slice";
-import { revalidatePath } from "next/cache";
 
 const useFetch = (url: string, config: any) => {
   const options = useMemo(() => config, [config]);

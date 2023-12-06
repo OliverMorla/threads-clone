@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 
 interface NotificationContextProps {
   notification: NotificationProps;
@@ -13,7 +13,8 @@ interface NotificationProps {
   seconds: number;
 }
 
-export const NotificationContext = createContext<NotificationContextProps | null>(null);
+export const NotificationContext =
+  createContext<NotificationContextProps | null>(null);
 
 export const useNotification = () => {
   const context = useContext(NotificationContext);
@@ -30,6 +31,18 @@ const NotificationProvider = ({ children }: { children: React.ReactNode }) => {
     type: "",
     seconds: 0,
   });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setNotification({
+        message: "",
+        type: "",
+        seconds: 0,
+      });
+    }, notification.seconds * 1100);
+
+    return () => clearTimeout(timer);
+  }, [notification.seconds]);
 
   return (
     <NotificationContext.Provider

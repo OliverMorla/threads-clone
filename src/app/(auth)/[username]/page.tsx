@@ -12,7 +12,7 @@ import { Thread } from "@/components/Cards/Thread";
 import Notification from "@/components/Modals/Notification";
 
 import { addFollowToUser } from "@/lib/actions/follow.actions";
-import { GetUserSession, FetchUser } from "@/lib/options/user.options";
+import { GetUserSession, FetchUser } from "@/lib/actions/user.actions";
 import {
   followUser,
   unfollowUser,

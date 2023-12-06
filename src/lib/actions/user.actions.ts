@@ -30,6 +30,23 @@ async function FetchUser(username: string) {
   }
 }
 
+async function GetUserById(userId: string) {
+  try {
+    const res = await fetch(`/api/auth/user`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ userId, username: null }),
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.message);
+    return data;
+  } catch (err) {
+    return err instanceof Error ? err.message : "failed to get user";
+  }
+}
+
 async function UpdateProfile(updateUserInput: UpdateUserInput) {
   try {
     const res = await fetch("/api/auth/user/update", {
@@ -60,4 +77,5 @@ export {
   UpdateEmail,
   GetUserSession,
   FetchUser,
+  GetUserById,
 };

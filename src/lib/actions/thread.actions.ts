@@ -1,8 +1,13 @@
 // fetch threads from the server
-async function fetchThreads(limit: string) {
-  const res = await fetch("/api/threads");
-  const data = await res.json();
-  return data;
+async function FetchThreads(limit: string) {
+  try {
+    const res = await fetch("/api/threads");
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.message);
+    return data;
+  } catch (err) {
+    return err instanceof Error ? err.message : "Failed to fetch threads";
+  }
 }
 
 // delete thread from the server
@@ -15,11 +20,8 @@ async function DeleteThread(threadId: string) {
       },
       body: JSON.stringify({ threadId }),
     });
-
     const data = await res.json();
-
     if (!data.ok) throw new Error(data.message);
-
     return data;
   } catch (err) {
     if (err instanceof Error) {
@@ -41,14 +43,13 @@ async function CreateThread(threadInput: ThreadInput) {
       },
       body: JSON.stringify(threadInput),
     });
-
     const data = await res.json();
-
     if (!data.ok) throw new Error(data.message);
-
     return data;
   } catch (err) {
-    alert(err instanceof Error ? err.message : "failed to create thread");
+    if (err instanceof Error) {
+      return err.message;
+    }
   }
 }
 
@@ -107,13 +108,8 @@ async function LikeThread(threadId: string) {
       },
       body: JSON.stringify({ threadId }),
     });
-
     const data = await res.json();
-
-    console.log(data);
-
     if (!data.ok) throw new Error(data.message);
-
     return data;
   } catch (err) {
     alert(err instanceof Error ? err.message : null);
@@ -127,4 +123,5 @@ export {
   ReplyToThread,
   StartThread,
   LikeThread,
+  FetchThreads,
 };

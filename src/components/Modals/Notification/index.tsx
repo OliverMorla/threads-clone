@@ -32,7 +32,7 @@ const Notification = ({
             transition: { ease: "easeIn", duration: 0.5 },
           }}
           exit={{ opacity: 0, y: -100, transition: { duration: 0.5 } }}
-          className="w-full absolute flex justify-center top-0"
+          className="w-full fixed z-20 flex justify-center top-0"
         >
           <div className="flex items-center gap-2 bg-[--septenary] p-2">
             <Image

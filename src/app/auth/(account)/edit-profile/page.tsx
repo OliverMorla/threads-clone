@@ -6,7 +6,7 @@ import Image from "next/image";
 
 import { UploadButton } from "@/utils/uploadthing";
 
-import { UpdateProfile } from "@/lib/options/user.options";
+import { UpdateProfile } from "@/lib/actions/user.actions";
 
 import Notification from "@/components/Modals/Notification";
 

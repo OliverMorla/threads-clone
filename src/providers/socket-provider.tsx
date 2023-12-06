@@ -7,7 +7,6 @@ import { socket } from "@/lib/socket";
 interface SocketContextProps {
   isConnected: boolean;
 }
-console.log("Socket Context is mounted!");
 
 export const SocketContext = createContext<SocketContextProps | null>(null);
 

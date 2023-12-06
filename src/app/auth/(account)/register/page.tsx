@@ -36,7 +36,7 @@ const Register = () => {
   };
 
   return (
-    <main className="h-full w-full flex justify-center items-center flex-col">
+    <main className="h-screen w-full flex justify-center items-center flex-col">
       <Image
         src={"/assets/images/banner-main.png"}
         width={1080}

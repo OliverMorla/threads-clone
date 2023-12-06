@@ -5,8 +5,12 @@ import { useSession } from "next-auth/react";
 import useFetch from "@/hooks/useFetch";
 import { Thread } from "@/components/Cards/Thread";
 import { LoadingWithoutBg } from "@/components/Loading";
+import Notification from "@/components/Modals/Notification";
+import { useNotification } from "@/providers/notification-provider";
 
 const Bookmarks = () => {
+  const { notification } = useNotification();
+
   const {
     data: threads,
     loading,
@@ -24,6 +28,13 @@ const Bookmarks = () => {
 
   return (
     <main className="h-full w-full flex justify-center items-center flex-col">
+      {notification.message.length > 0 && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          seconds={notification.seconds}
+        />
+      )}
       <section className="p-2 max-w-[575px] w-full">
         {loading ? (
           <LoadingWithoutBg />

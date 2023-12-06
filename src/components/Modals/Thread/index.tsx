@@ -16,10 +16,11 @@ import {
   CreateThread,
   StartThread,
   DeleteThread,
-} from "@/lib/options/thread.options";
+} from "@/lib/actions/thread.actions";
 
 import { UploadButton } from "@/utils/uploadthing";
 import Notification from "../Notification";
+import { usePathname } from "next/navigation";
 import { useNotification } from "@/providers/notification-provider";
 import {
   addToBookmark,
@@ -225,6 +226,8 @@ const CreateThreadModal = ({
 const ThreadModalOptions = ({ userId, threadId }: ThreadModalOptionsProps) => {
   const dispatch = useDispatch();
 
+  const pathname = usePathname();
+
   const { setNotification } = useNotification();
 
   const handleThreads = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -255,6 +258,12 @@ const ThreadModalOptions = ({ userId, threadId }: ThreadModalOptionsProps) => {
             type: "success",
             seconds: 5,
           });
+        } else {
+          setNotification({
+            message: bookmarkAddData.message || bookmarkAddData,
+            type: "error",
+            seconds: 5,
+          });
         }
         break;
       case "bookmark-remove":
@@ -266,6 +275,12 @@ const ThreadModalOptions = ({ userId, threadId }: ThreadModalOptionsProps) => {
             type: "success",
             seconds: 5,
           });
+        } else {
+          setNotification({
+            message: bookmarkRemoveData.message || bookmarkRemoveData,
+            type: "error",
+            seconds: 5,
+          });
         }
         break;
       default:
@@ -274,7 +289,6 @@ const ThreadModalOptions = ({ userId, threadId }: ThreadModalOptionsProps) => {
   };
 
   const { data: session, status } = useSession();
-
 
   return (
     <motion.div
@@ -310,8 +324,18 @@ const ThreadModalOptions = ({ userId, threadId }: ThreadModalOptionsProps) => {
           // @ts-ignore
           session?.user ? (
             <li className="hover:bg-[--primary-hover] transition-colors">
-              <button className="p-2" name="bookmark-add" onClick={handleThreads}>
-                Bookmark
+              <button
+                className="p-2"
+                name={
+                  !pathname.startsWith("/bookmarks")
+                    ? "bookmark-add"
+                    : "bookmark-remove"
+                }
+                onClick={handleThreads}
+              >
+                {!pathname.startsWith("/bookmarks")
+                  ? "Bookmark"
+                  : "Un-Bookmark"}
               </button>
             </li>
           ) : null

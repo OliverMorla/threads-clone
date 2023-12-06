@@ -89,15 +89,17 @@ export async function POST(req: NextRequest) {
     secret: process.env.OAUTH_SECRET,
   });
 
-  const { username } = await req.json();
+  const { username, userId } = await req.json();
 
-  if (!username) {
-    return NextResponse.json({
-      status: 400,
-      ok: false,
-      message: "Failed to read username or id",
-    });
-  }
+  console.log(username, userId);
+
+  // if (!username || !userId) {
+  //   return NextResponse.json({
+  //     status: 400,
+  //     ok: false,
+  //     message: "Failed to read username or userId",
+  //   });
+  // }
 
   if (!session) {
     return NextResponse.json({
@@ -147,11 +149,30 @@ export async function POST(req: NextRequest) {
         },
       ]);
 
-    if (user) {
+    const userById = await User.findOne({
+      _id: userId,
+    }).select({
+      password: 0,
+      email: 0,
+      bio: 0,
+      website: 0,
+      likes: 0,
+      replies: 0,
+      threads: 0,
+      followers: 0,
+      following: 0,
+      activeChats: 0,
+      createdAt: 0,
+      updatedAt: 0,
+      bookmarks: 0,
+      onBoarded: 0,
+    });
+
+    if (user || userById) {
       return NextResponse.json({
         status: 200,
         ok: true,
-        data: user,
+        data: user || userById,
         message: "User session found!",
       });
     }

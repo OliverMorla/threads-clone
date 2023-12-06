@@ -209,12 +209,58 @@ interface ChatProps {
 }
 
 interface messages {
-  chatId: string
+  chatId: string;
 }
 interface SingleChatModalProps {
   userId: string;
-  username: string;
-  userImage: string;
-  messages: messages[]
 }
 
+interface Chats {
+  _id: string;
+  image: string;
+  username: string;
+}
+
+interface UserChatProps {
+  _id: string;
+  image: string;
+  username: string;
+  name: string;
+  verified: boolean;
+}
+
+
+interface SingleChatModalProps {
+
+}
+
+
+interface Messages {
+  _id: string;
+  conversationId: string;
+  sender: string;
+  recipient: string;
+  content: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+interface MessagesWithUsers {
+  _id: string;
+  conversationId: string;
+  sender: UserMessageProp;
+  recipient: UserMessageProp;
+  content: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+interface UserMessageProp {
+  _id: string;
+  username: string;
+  image: string;
+}

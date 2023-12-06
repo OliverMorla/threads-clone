@@ -11,8 +11,9 @@ import {
   ThreadModalOptions,
 } from "@/components/Modals/Thread";
 
-import { LikeThread } from "@/lib/options/thread.options";
+import { LikeThread } from "@/lib/actions/thread.actions";
 import { addThreadLike } from "@/redux/slices/thread-slice";
+import { useNotification } from "@/providers/notification-provider";
 
 // Thread without children
 const Thread = ({
@@ -28,6 +29,8 @@ const Thread = ({
 }: ThreadCardProps) => {
   const dispatch = useDispatch();
 
+  const { setNotification } = useNotification();
+
   const [showOptionsModal, setShowOptionsModal] = useState<boolean>(false);
 
   const { data: session } = useSession();
@@ -36,8 +39,22 @@ const Thread = ({
   const handleLikeThread = async () => {
     const data = await LikeThread(threadId);
 
-    if (data) {
+    if (data.ok) {
       dispatch(addThreadLike({ threadId, userId, username, userImage }));
+      
+      setNotification({
+        message: data.message,
+        type: "success",
+        seconds: 2,
+      });
+      
+
+    } else {
+      setNotification({
+        message: data.message || data,
+        type: "error",
+        seconds: 2,
+      });
     }
   };
 
@@ -523,7 +540,6 @@ const ThreadWithReplies = ({
           />
         </motion.section>
       ) : null}
-
     </section>
   );
 };

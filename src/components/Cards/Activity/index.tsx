@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 
 const ActivtyCard = ({
@@ -30,14 +31,6 @@ const ActivtyCard = ({
           </section>
         </section>
       </section>
-      {/* <section className="flex gap-2">
-        <button className="bg-transparent border-[--octonary] border-[1px] text-white rounded-lg px-4 py-1 hover:bg-white hover:text-black transition-all">
-          Confirm
-        </button>
-        <button className="bg-transparent border-[--octonary] border-[1px] text-white rounded-lg px-4 py-1 hover:bg-white hover:text-black transition-all">
-          Delete
-        </button>
-      </section> */}
     </section>
   );
 };

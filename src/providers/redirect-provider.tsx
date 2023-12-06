@@ -9,7 +9,7 @@ const RedirectProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       {!session?.user &&
-      (pathname.startsWith("/chat") ||
+      (
         pathname.startsWith("/bookmarks") ||
         pathname.startsWith("/activity") ||
         pathname.startsWith("/auth/edit-profile"))
