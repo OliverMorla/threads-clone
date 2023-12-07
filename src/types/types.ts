@@ -234,6 +234,19 @@ interface SingleChatModalProps {
 
 }
 
+interface Conversations {
+  _id: string;
+  participants: string[];
+  lastMessage: {
+    _id: string;
+    content: string;
+    createdAt: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
 
 interface Messages {
   _id: string;

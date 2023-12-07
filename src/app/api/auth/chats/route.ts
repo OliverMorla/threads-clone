@@ -3,6 +3,7 @@ import { connectToDatabase } from "@/lib/db/moongose";
 import { getToken } from "next-auth/jwt";
 import User from "@/lib/models/user.model";
 import Message from "@/lib/models/message.model";
+import Conversation from "@/lib/models/conversation.model";
 
 // get all active chats
 export async function GET(req: NextRequest) {
@@ -25,16 +26,15 @@ export async function GET(req: NextRequest) {
       $or: [{ recipient: user.sub }, { sender: user.sub }],
     });
 
-    console.log(doesMessageExist);
+    // console.log(doesMessageExist);
 
     if (doesMessageExist) {
-      
       const doesActiveChatExist = await User.findOne({
         _id: user?.sub,
-        activeChats: { $elemMatch: { $eq: doesMessageExist.sender } }
+        activeChats: { $elemMatch: { $eq: doesMessageExist.sender } },
       });
 
-      console.log(doesActiveChatExist);
+      // console.log(doesActiveChatExist);
 
       if (doesActiveChatExist && doesMessageExist.sender !== user?.sub) {
         const chats = await User.find({
@@ -43,12 +43,26 @@ export async function GET(req: NextRequest) {
           .select("activeChats")
           .populate("activeChats", "image username");
 
+        const conversations = await Conversation.find({
+          participants: { $elemMatch: { $eq: user?.sub } },
+        }).populate([
+          {
+            path: "participants",
+            select: "image username",
+          },
+          {
+            path: "lastMessage",
+            select: "content createdAt",
+          },
+        ]);;
+
         if (chats) {
           return NextResponse.json({
             status: 200,
             ok: true,
             message: "Chats fetched successfully",
             data: chats,
+            conversations: conversations,
           });
         }
       } else {
@@ -58,7 +72,9 @@ export async function GET(req: NextRequest) {
           },
           {
             $push: {
-              activeChats: doesMessageExist.sender !== user?.sub && doesMessageExist.sender,
+              activeChats:
+                doesMessageExist.sender !== user?.sub &&
+                doesMessageExist.sender,
             },
           }
         );
@@ -70,12 +86,28 @@ export async function GET(req: NextRequest) {
         .select("activeChats")
         .populate("activeChats", "image username");
 
+      const conversations = await Conversation.find({
+        participants: { $elemMatch: { $eq: user?.sub } },
+      }).populate([
+        {
+          path: "participants",
+          select: "image username",
+        },
+        {
+          path: "lastMessage",
+          select: "content createdAt",
+        },
+      ]);
+
+      console.log(conversations);
+
       if (chats) {
         return NextResponse.json({
           status: 200,
           ok: true,
           message: "Chats fetched successfully",
           data: chats,
+          conversations: conversations,
         });
       }
     }

@@ -10,7 +10,7 @@ import { getChats } from "@/lib/actions/chat.actions";
 
 const Chat = () => {
   const { data: session } = useSession();
-  const [activeChats, setActiveChats] = useState<Chats[]>([]);
+  const [conversions, setConversions] = useState<Conversations[]>([]);
   const { notification, setNotification } = useNotification();
 
   useEffect(() => {
@@ -23,11 +23,11 @@ const Chat = () => {
           seconds: 4,
         });
       }
-
-      setActiveChats(data.data[0].activeChats);
+      setConversions(data.conversations);
     };
     fetchChats();
   }, []);
+
 
   return (
     <main className="h-screen w-full flex m-2">
@@ -58,18 +58,28 @@ const Chat = () => {
           <p>Messages</p>
         </section>
         <section className="mx-4 my-2 flex flex-col gap-2">
-          {activeChats.length > 0 ? (
-            activeChats.map((user) => (
-              <Conversation
-                isRead={true}
-                lastMessage="Hey!"
-                lastMessageTimestamp="7d"
-                username={user.username}
-                userImage={user.image}
-                userId={user._id}
-                key={user._id}
+          {conversions?.length > 0 ? (
+           conversions.map((conversation) => {
+            
+            return (
+              <Conversation 
+              key={conversation._id}
+              username={
+                // @ts-ignore
+                conversation.participants.filter((participant) => participant._id !== session?.user?.id)[0].username
+              }
+              userImage={
+                // @ts-ignore
+                conversation.participants.filter((participant) => participant._id !== session?.user?.id)[0].image}
+              lastMessage={conversation.lastMessage.content}
+              isRead={true}
+              lastMessageTimestamp={new Date(conversation.lastMessage.createdAt).toLocaleTimeString()}
+              userId={
+                // @ts-ignore
+                conversation.participants.filter((participant) => participant._id !== session?.user?.id)[0]._id}
               />
-            ))
+            ) 
+           })
           ) : (
             <p> No active chats available! </p>
           )}

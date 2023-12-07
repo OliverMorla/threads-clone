@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
           {
             _id: session.sub,
           },
-          { 
+          {
             following: {
               $elemMatch: {
                 _id: userId,
@@ -113,12 +113,20 @@ export async function POST(req: NextRequest) {
           });
         }
 
-        const doesFollowExist = await User.findOne({
-          _id: session.sub,
-          "following.users": userId,
-        });
+        const doesFollowExist = await User.findOne(
+          {
+            _id: session.sub,
+          },
+          {
+            following: {
+              $elemMatch: {
+                _id: userId,
+              },
+            },
+          }
+        );
 
-        console.log(doesFollowExist)
+        console.log(doesFollowExist);
 
         if (!doesFollowExist) {
           return NextResponse.json({
