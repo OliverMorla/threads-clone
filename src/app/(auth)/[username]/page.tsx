@@ -161,8 +161,7 @@ const Profile = ({
   // @ts-ignore // check if current user matches the username in the url
   const doesCurrentUserMatch = usernameWithoutAt === session?.user.username;
   // @ts-ignore // check if current user matches the username in the url
-  const doesCurrentUserDoesNotMatch =
-    usernameWithoutAt !== session?.user.username;
+  const doesCurrentUserDoesNotMatch = usernameWithoutAt !== session?.user.username;
 
   return (
     <main className="h-auto w-full flex justify-start flex-col items-center max-w-[500px] mx-auto">
