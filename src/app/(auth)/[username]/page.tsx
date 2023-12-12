@@ -19,7 +19,7 @@ import {
   assignCurrentUser,
   assignTargetUser,
 } from "@/redux/slices/user-slice";
- 
+
 const Profile = ({
   params: { username },
 }: {
@@ -161,7 +161,8 @@ const Profile = ({
   // @ts-ignore // check if current user matches the username in the url
   const doesCurrentUserMatch = usernameWithoutAt === session?.user.username;
   // @ts-ignore // check if current user matches the username in the url
-  const doesCurrentUserDoesNotMatch = usernameWithoutAt !== session?.user.username;
+  const doesCurrentUserDoesNotMatch =
+    usernameWithoutAt !== session?.user.username;
 
   return (
     <main className="h-auto w-full flex justify-start flex-col items-center max-w-[500px] mx-auto">
@@ -231,13 +232,23 @@ const Profile = ({
 
       {doesCurrentUserDoesNotMatch &&
         (doesFollowExist ? (
-          <button
-            className="bg-[--septenary] p-2 rounded-md mt-4 hover:bg-[--primary-hover] transition-colors w-full"
-            name="unfollow"
-            onClick={handleFollow}
-          >
-            Unfollow
-          </button>
+          <section className="w-full">
+            <button
+              className="bg-[--septenary] p-2 rounded-md mt-4 hover:bg-[--primary-hover] transition-colors w-full"
+              name="unfollow"
+              onClick={handleFollow}
+            >
+              Unfollow
+            </button>
+            <Link href={`/chat/${user?._id}`}>
+              <button
+                className="bg-[--septenary] p-2 rounded-md mt-4 hover:bg-[--primary-hover] transition-colors w-full"
+                name="message"
+              >
+                Message
+              </button>
+            </Link>
+          </section>
         ) : (
           <button
             className="bg-[--septenary] p-2 rounded-md mt-4 hover:bg-[--primary-hover] transition-colors w-full"
